@@ -8,9 +8,9 @@
 ### Implement the Data Layer
 #### Create the View Reservations for Host feature
 ##### Create Reservation File Repository
-* [ ] Set up a unique identifier (email address) for host and guests - time estimate: 30 minutes
-* [ ] Set up an id to track reservations - time estimate: 30 minutes
-* [ ] Add CRUD functionality - time estimate: 1.5 hours
+* [ ] Set up a unique identifier (email address) for host and guests - time estimate: 1 hour
+* [ ] Set up an id to track reservations - time estimate: 1 hour
+* [ ] Add CRUD functionality - time estimate: 2.5 hours
   * Create a reservation - add()
   * Read a reservation - findAll(), findById()
   * Update a reservation - update()
@@ -20,7 +20,7 @@
   * writeToFile
   * serialize
   * deserialize
-* [ ] Add unit tests - 2 hours
+* [ ] Add unit tests - 3 hours
   
 ##### Create a Reservation Repository
 ##### Define the interface
@@ -34,23 +34,35 @@
 
 ### Implement the Domain Layer
 #### Create Reservation Service
-* [ ] Add CRUD functionality - time estimate: 1 hour
+* [ ] Add CRUD functionality - time estimate: 2 hours
   * Create a reservation - add()
   * Read a reservation - findAll(), findById()
   * Update a reservation - update()
   * Delete a reservation - deleteById()
-* [ ] Create Methods - 2 hours
-  * validate() - 30 minutes
+* [ ] Create Methods - 3 hours
+  * validate()
     (Validation must be implemented to ensure that dates do not overlap)
-    * Existing reservation -
-      - if a date ends in the middle of an existing reservation,
+    * Make a Reservation 
+      * Start and end dates are required
+        - If a date ends in the middle of an existing reservation, or 
+        if a date begins in the middle of an existing reservation
         the reservation is not valid and cannot be booked
-      - if a date begins in the middle of an existing reservation,
-        the reservation is not valid and cannot be booked
-      - Start and end dates are required
+      * Guest, host, and start and end dates are required.
+      * The guest and host must already exist in the "database". Guests and hosts cannot be created.
+      * The start date must come before the end date.
+      * The reservation may never overlap existing reservation dates.
+      * The start date must be in the future.
+    * Edit a Reservation
+      * Guest, host, and start and end dates are required. 
+      * The guest and host must already exist in the "database". 
+      * Guests and hosts cannot be created. 
+      * The start date must come before the end date. 
+      * The reservation may never overlap existing reservation dates.
+    * Cancel a Reservation
+      * Cannot cancel a reservation that's in the past.
 
 #### Create Reservation Result
-* [ ] Create Methods - 2 hours
+* [ ] Create Methods - 3 hours
   * getReservation()
   * setReservation()
   * messages arraylist
@@ -59,13 +71,13 @@
 * [ ] Add unit tests - 2 hours
 
 ### Create Models
-* Menu enum - 10 minutes
+* Menu enum - 20 minutes
   * Exit
   * View Reservations for Host
   * Make a Reservation
   * Edit a Reservation
   * Cancel a Reservation
-* Reservation.java - 1 hour
+* Reservation.java - 2 hours
   * Define fields
     * int id
     * LocalDate date
@@ -77,7 +89,7 @@
 ### Implement the UI
 ## Create the Controller
 * [ ] Add the menuOption
-* [ ] Create Methods - 2 hours
+* [ ] Create Methods - 3 hours
   * addReservation()
   * viewReservation() - use host email address
   * updateReservation()
@@ -88,7 +100,7 @@
 
 ## Create the view
 * [ ] Implement a scanner
-* [ ] Create Methods - 3 hours
+* [ ] Create Methods - 4 hours
   * displayMenu() 
   * makeReservation()
   * updateById()
