@@ -3,7 +3,7 @@
 ## Mastery week project - Don't Wreck My House
 
 ## Tasks
-### Set up and structure project - 15 minutes
+### Set up and structure project - 30 minutes
 ### Add Spring DI
 ### Implement the Data Layer
 #### Create the View Reservations for Host feature
@@ -95,10 +95,10 @@
   * updateReservation()
   * deleteReservation()
 
-## Create the menu
+#### Create the menu
 * Menu enum
 
-## Create the view
+#### Create the view
 * [ ] Implement a scanner
 * [ ] Create Methods - 4 hours
   * displayMenu() 
