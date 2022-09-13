@@ -12,7 +12,7 @@ public class App {
     public static void main(String[] args) {
 
         ApplicationContext container = new AnnotationConfigApplicationContext(App.class);
-//        Controller controller = container.getBean(Controller.class);
-//        controller.run();
+        Controller controller = container.getBean(Controller.class);
+        controller.run();
     }
 }

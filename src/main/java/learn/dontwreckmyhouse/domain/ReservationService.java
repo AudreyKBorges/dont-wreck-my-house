@@ -4,11 +4,13 @@ import learn.dontwreckmyhouse.data.DataException;
 import learn.dontwreckmyhouse.data.ReservationRepository;
 import learn.dontwreckmyhouse.models.Host;
 import learn.dontwreckmyhouse.models.Reservation;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Service
 public class ReservationService {
 
     private final ReservationRepository repository;

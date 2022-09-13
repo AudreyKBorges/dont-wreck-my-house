@@ -6,7 +6,7 @@ public enum MenuOption {
     VIEW_RESERVATIONS("View Reservations for Host"),
     MAKE_RESERVATION("Make a Reservation"),
     EDIT_RESERVATION("Edit a Reservation"),
-    DELETE_PANEL("Cancel a Reservation");
+    CANCEL_RESERVATION("Cancel a Reservation");
 
     private final String title;
 
