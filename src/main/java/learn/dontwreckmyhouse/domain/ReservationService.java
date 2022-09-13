@@ -49,7 +49,7 @@ public class ReservationService {
     }
 
     // UPDATE
-    public Result update(Reservation entry) throws DataException {
+    public Result updateReservation(Reservation entry) throws DataException {
         Result result = validate(entry);
         if(!result.isSuccess()){
             return result;

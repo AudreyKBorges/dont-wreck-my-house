@@ -78,7 +78,7 @@ public class ReservationFileRepository implements ReservationRepository {
     public boolean deleteReservation(Reservation reservation) throws DataException {
         List<Reservation> entries = findByHost(reservation.getHost());
         for(int i = 0; i < entries.size(); i++){
-            if(entries.get(i).getId() == reservation){
+            if(entries.get(i).getId() == Integer.parseInt(reservation.toString())){
                 entries.remove(i);
                 writeToFile(entries);
                 return true;
@@ -121,5 +121,15 @@ public class ReservationFileRepository implements ReservationRepository {
         result.setGuest(guest);
         guest.setId(Integer.parseInt(fields[3]));
         return result;
+    }
+
+    private int getNextId(List<Reservation> reservations){
+        int maxId = 0;
+        for(Reservation reservation : reservations){
+            if(maxId < reservation.getId()){
+                maxId = reservation.getId();
+            }
+        }
+        return maxId + 1;
     }
 }
