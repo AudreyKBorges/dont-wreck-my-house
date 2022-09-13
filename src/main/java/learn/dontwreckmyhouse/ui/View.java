@@ -3,8 +3,10 @@ package learn.dontwreckmyhouse.ui;
 import learn.dontwreckmyhouse.domain.Result;
 import learn.dontwreckmyhouse.models.Reservation;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 public class View {
     private final Scanner console = new Scanner(System.in);
@@ -20,20 +22,15 @@ public class View {
     }
 
     public void displayReservations(List<Reservation> reservations){
-        String input = readSubheading(String.format("Host email: "));
-        if(reservations.size() == 0) {
+        if(reservations == null || reservations.isEmpty()) {
             System.out.println("No reservations found");
         } else {
-            for(Reservation r : reservations){
-                if(r.getHost().equals(input)){
-                    displayText(String.format("Id: %s, Start Date: %s, End Date: %s, Guest: %s, Email: %s",
-                            r.getId(),
-                            r.getStartDate(),
-                            r.getEndDate(),
-                            r.getGuest(),
-                            r.getHost()));
-                }
-            }
+            Stream<Reservation> reservationsStream = getReservations().stream();
+            reservationsStream.forEach(System.out::println);
+
+            getReservations().stream()
+                    .sorted()
+                    .forEach(System.out::println);
         }
     }
 
@@ -58,10 +55,6 @@ public class View {
 
     public void displayText(String line){
         System.out.println(line);
-    }
-
-    public String readSubheading(String line){
-        return line;
     }
 
     private int readInt(String prompt){

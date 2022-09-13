@@ -32,7 +32,7 @@ public class Controller {
                     view.displayHeader("Goodbye!");
                     break;
                 case VIEW_RESERVATIONS:
-//                    viewReservations();
+                    viewReservations();
                     break;
                 case MAKE_RESERVATION:
                     break;
@@ -45,9 +45,9 @@ public class Controller {
     }
 
     // READ
-//    private void viewReservations() throws DataException {
-//        view.displayHeader(MenuOption.VIEW_RESERVATIONS.getTitle());
-//        List<Reservation> reservations = service.findByHost();
-//        view.displayReservations(reservations);
-//    }
+    private void viewReservations() throws DataException {
+        view.displayHeader(MenuOption.VIEW_RESERVATIONS.getTitle());
+        List<Reservation> reservations = service.findByHost();
+        view.displayReservations(reservations);
+    }
 }

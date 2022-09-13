@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public class GuestFileRepository {
+public class GuestFileRepository implements GuestRepository {
     private final String filePath;
     private static final String HEADER = "guest_id,first_name,last_name,email,phone,state";
 

@@ -39,7 +39,7 @@ public class ReservationFileRepository implements ReservationRepository {
 
     // READ
     @Override
-    public List<Reservation> findByHost(Host host) throws DataException {
+    public List<Reservation> findByHost(Host host) {
         ArrayList<Reservation> result = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(getDirectory()))) {
 
