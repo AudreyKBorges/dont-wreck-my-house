@@ -1,12 +1,13 @@
 package learn.dontwreckmyhouse.data;
 
+import learn.dontwreckmyhouse.models.Guest;
+import learn.dontwreckmyhouse.models.Host;
 import learn.dontwreckmyhouse.models.Reservation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.math.BigDecimal;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,35 +34,22 @@ public class ReservationFileRepository implements ReservationRepository {
     }
 
     // READ
-
     @Override
-    public List<Reservation> findAll() {
-        ArrayList<Reservation> result = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(directory))) {
-
+    public List<Reservation> findAll() throws DataException {
+        List<Reservation> result = new ArrayList<>();
+        try(BufferedReader reader = new BufferedReader(new FileReader(directory))){
             reader.readLine();
 
-            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-
-                String[] fields = line.split(",", -1);
-                if (fields.length == 4) {
-                    result.add(deserialize(fields));
-                }
+            for(String line = reader.readLine(); line != null; line = reader.readLine()){
+                Reservation entry = deserialize(line);
+                result.add(entry);
             }
-        } catch (IOException ex) {
-            // don't throw on read
+        }catch(FileNotFoundException ex){
+
+        }catch(IOException ex){
+            throw new DataException("Could not open directory: " + directory, ex);
         }
         return result;
-    }
-
-    public Reservation findById(int reservationId) {
-        List<Reservation> all = findAll();
-        for(Reservation reservation : all){
-            if(reservation.getId() == reservationId){
-                return  reservation;
-            }
-        }
-        return null;
     }
 
     // UPDATE
@@ -78,10 +66,6 @@ public class ReservationFileRepository implements ReservationRepository {
         return false;
     }
 
-    private String getDirectory(LocalDate date) {
-        return Paths.get(directory, date + ".csv").toString();
-    }
-
     private void writeToFile(List<Reservation> reservations) throws DataException {
         try(PrintWriter writer = new PrintWriter(directory)) {
             writer.println(HEADER);
@@ -94,22 +78,27 @@ public class ReservationFileRepository implements ReservationRepository {
         }
     }
 
-    private String serialize(Reservation reservation) {
-        return String.format("%s,%s,%s,%s",
-                reservation.getStartDate(),
-                reservation.getEndDate(),
-                reservation.getGuestId(),
-                reservation.getTotal());
+    private String serialize(Reservation entry){
+        return String.format("%s,%s,%s,%s,%s",
+                entry.getId(),
+                entry.getStartDate(),
+                entry.getEndDate(),
+                entry.getGuest().getId(),
+                entry.getTotal());
     }
 
-    private Reservation deserialize(String[] fields) {
+    private Reservation deserialize(String[] fields, Host host){
         Reservation result = new Reservation();
+
         result.setId(Integer.parseInt(fields[0]));
+        result.setHost(host);
         result.setStartDate(LocalDate.parse(fields[1]));
         result.setEndDate(LocalDate.parse(fields[2]));
-        result.setGuestId(Integer.parseInt(fields[3]));
-        result.setTotal(BigDecimal.valueOf(Integer.parseInt(fields[4])));
+        result.setTotal(BigDecimal.valueOf(Double.parseDouble(fields[4])));
 
+        Guest guest = new Guest();
+        result.setGuest(guest);
+        guest.setId(Integer.parseInt(fields[3]));
         return result;
     }
 

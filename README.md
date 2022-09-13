@@ -140,5 +140,5 @@
 * Work out remaining project bugs
 
 ## Approach
-I will approach this from back to front starting with the data layer
+I will approach this by working vertically to set up one method at a time from back to front starting with the data layer
 and working my way to the ui layer.
