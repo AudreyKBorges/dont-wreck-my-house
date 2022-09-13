@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.math.BigDecimal;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +23,14 @@ public class ReservationFileRepository implements ReservationRepository {
         this.directory = directory;
     }
 
+    public String getDirectory() {
+        return directory;
+    }
+
     // CREATE
     @Override
     public Reservation add(Reservation reservation) throws DataException {
-        List<Reservation> all = findAll();
+        List<Reservation> all = findByHost(reservation.getHost());
         int nextId = getNextId(all);
         reservation.setId(nextId);
         all.add(reservation);
@@ -35,31 +40,47 @@ public class ReservationFileRepository implements ReservationRepository {
 
     // READ
     @Override
-    public List<Reservation> findAll() throws DataException {
-        List<Reservation> result = new ArrayList<>();
-        try(BufferedReader reader = new BufferedReader(new FileReader(directory))){
+    public List<Reservation> findByHost(Host host) throws DataException {
+        ArrayList<Reservation> result = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(getDirectory()))) {
+
             reader.readLine();
 
-            for(String line = reader.readLine(); line != null; line = reader.readLine()){
-                Reservation entry = deserialize(line);
-                result.add(entry);
-            }
-        }catch(FileNotFoundException ex){
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
 
-        }catch(IOException ex){
-            throw new DataException("Could not open directory: " + directory, ex);
+                String[] fields = line.split(",", -1);
+                if (fields.length == 7) {
+                    result.add(deserialize(fields, host));
+                }
+            }
+        } catch (IOException ex) {
+            // don't throw on read
         }
         return result;
     }
 
     // UPDATE
     @Override
-    public boolean update(Reservation reservation) throws DataException {
-        List<Reservation> all = findAll();
-        for (int i = 0; i < all.size(); i++) {
-            if (all.get(i).getId() == reservation.getId()) {
-                all.set(i, reservation);
-                writeToFile(all);
+    public boolean updateReservation(Reservation reservation)  throws DataException {
+        List<Reservation> entries = findByHost(reservation.getHost());
+        for (int i = 0; i < entries.size(); i++) {
+            if (entries.get(i).getId() == reservation.getId()) {
+                entries.set(i, reservation);
+                writeToFile(entries);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // DELETE
+    @Override
+    public boolean deleteReservation(Reservation reservation) throws DataException {
+        List<Reservation> entries = findByHost(reservation.getHost());
+        for(int i = 0; i < entries.size(); i++){
+            if(entries.get(i).getId() == reservation){
+                entries.remove(i);
+                writeToFile(entries);
                 return true;
             }
         }
@@ -100,15 +121,5 @@ public class ReservationFileRepository implements ReservationRepository {
         result.setGuest(guest);
         guest.setId(Integer.parseInt(fields[3]));
         return result;
-    }
-
-    private int getNextId(List<Reservation> reservations){
-        int maxId = 0;
-        for(Reservation reservation : reservations){
-            if(maxId < reservation.getId()){
-                maxId = reservation.getId();
-            }
-        }
-        return maxId + 1;
     }
 }

@@ -27,6 +27,10 @@ public class Host {
         this.weekendRate = weekendRate;
     }
 
+    public Host() {
+
+    }
+
     public String getId() {
         return id;
     }
