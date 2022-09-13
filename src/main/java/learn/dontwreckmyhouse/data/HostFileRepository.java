@@ -1,4 +1,4 @@
-package learn.data;
+package learn.dontwreckmyhouse.data;
 
 public class HostFileRepository {
 }
