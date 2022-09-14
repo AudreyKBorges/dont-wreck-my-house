@@ -1,22 +1,31 @@
 package learn.dontwreckmyhouse.domain;
 
 import learn.dontwreckmyhouse.data.DataException;
+import learn.dontwreckmyhouse.data.GuestRepository;
+import learn.dontwreckmyhouse.data.HostRepository;
 import learn.dontwreckmyhouse.data.ReservationRepository;
+import learn.dontwreckmyhouse.models.Guest;
 import learn.dontwreckmyhouse.models.Host;
 import learn.dontwreckmyhouse.models.Reservation;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 public class ReservationService {
 
-    private final ReservationRepository repository;
+    private final ReservationRepository reservationRepository;
+    private final GuestRepository guestRepository;
+    private final HostRepository hostRepository;
 
-    public ReservationService(ReservationRepository repository) {
-        this.repository = repository;
+    public ReservationService(ReservationRepository reservationRepository, GuestRepository guestRepository, HostRepository hostRepository) {
+        this.reservationRepository = reservationRepository;
+        this.guestRepository = guestRepository;
+        this.hostRepository = hostRepository;
     }
 
     public Result add(Reservation entry) throws DataException {
@@ -39,7 +48,7 @@ public class ReservationService {
         }
 
         if(result.isSuccess()){
-            entry = repository.add(entry);
+            entry = reservationRepository.add(entry);
             result.setReservation(entry);
         }
         return result;
@@ -47,7 +56,14 @@ public class ReservationService {
 
     // READ
     public List<Reservation> findByHost(Host host) throws DataException {
-        return repository.findByHost(host);
+        Map<Integer, Guest> guestMap = guestRepository.findAll().stream()
+                .collect(Collectors.toMap(guest -> guest.getId(), guest -> guest));
+        List<Reservation> result = reservationRepository.findByHost(host);
+        for(Reservation reservation : result) {
+            reservation.setGuest(guestMap.get(reservation.getGuest().getId()));
+            return result;
+        }
+        return result;
     }
 
     // UPDATE
@@ -56,7 +72,7 @@ public class ReservationService {
         if(!result.isSuccess()){
             return result;
         }
-        boolean updated = repository.updateReservation(entry);
+        boolean updated = reservationRepository.updateReservation(entry);
 
         if(!updated){
             result.addMessage(String.format("Reservation entry with id %s does not exist", entry.getId()));
@@ -68,7 +84,7 @@ public class ReservationService {
     // DELETE
     public Result deleteReservation(Reservation reservation) throws DataException {
         Result result = new Result();
-        if(!repository.deleteReservation(reservation)){
+        if(!reservationRepository.deleteReservation(reservation)){
             result.addMessage(String.format("Reservation entry with id %s does not exist.", reservation));
         }
         return result;

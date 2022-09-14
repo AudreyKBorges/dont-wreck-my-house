@@ -4,6 +4,7 @@ import learn.dontwreckmyhouse.domain.Result;
 import learn.dontwreckmyhouse.models.Reservation;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,12 +23,16 @@ public class View {
     }
 
     public void displayReservations(List<Reservation> reservations){
-        if(reservations == null || reservations.isEmpty()) {
-            System.out.println("No reservations found");
-        } else {
-            List<Reservation> reservationsList = reservations.stream().sorted().toList();
-            reservationsList.forEach(System.out::println);
+        if(reservations == null) {
+            displayText("Host does not exist");
         }
+        if(reservations.isEmpty()) {
+            displayText("No reservations found for this host");
+            return;
+        }
+        reservations.stream()
+                .sorted(Comparator.comparing(Reservation::getStartDate))
+                .forEach(System.out::println);
     }
 
     // Helper methods
@@ -41,14 +46,14 @@ public class View {
         return readRequiredString("Host email: ");
     }
 
-    public void displayResult(Result result) {
-        if(result.isSuccess()){
-            displayText("Success!");
-        } else{
-            displayText("Error: ");
-            for(String error : result.getMessages()){
-                System.out.println(error);
-            }
+    public void displayResult(boolean success, String message) {
+        displayResult(success, List.of(message));
+    }
+
+    public void displayResult(boolean success, List<String> messages) {
+        displayHeader(success ? "success" : "error");
+        for(String message : messages) {
+            displayText(message);
         }
     }
 
@@ -97,5 +102,9 @@ public class View {
     private String readString(String prompt) {
         System.out.print(prompt);
         return console.nextLine();
+    }
+
+    public void enterToContinue(){
+        readString("Press [Enter] to continue.");
     }
 }

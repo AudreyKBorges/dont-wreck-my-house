@@ -5,13 +5,16 @@ public class Guest {
     private String firstName;
     private String lastName;
     private String email;
+
+    private String phone;
     private String state;
 
-    public Guest(int id, String firstName, String lastName, String email, String state) {
+    public Guest(int id, String firstName, String lastName, String email, String phone, String state) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.phone = phone;
         this.state = state;
     }
 
@@ -57,5 +60,18 @@ public class Guest {
 
     public void setState(String state) {
         this.state = state;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    @Override
+    public String toString(){
+        return String.format("Panel{ id: %s%n section: %s%n row: %s%n column: %s%n year installed: %s%n  material: %s%n tracking: %s%n}", id, section, row, column, installationYear, material, isTracking);
     }
 }

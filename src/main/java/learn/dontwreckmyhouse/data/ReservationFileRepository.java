@@ -46,6 +46,9 @@ public class ReservationFileRepository implements ReservationRepository {
     @Override
     public List<Reservation> findByHost(Host host) {
         ArrayList<Reservation> result = new ArrayList<>();
+        if(host == null || host.getId().isBlank() || host.getId() == null) {
+            return result;
+        }
         try (BufferedReader reader = new BufferedReader(new FileReader(getFilePath(host)))) {
 
             reader.readLine();
@@ -53,7 +56,7 @@ public class ReservationFileRepository implements ReservationRepository {
             for (String line = reader.readLine(); line != null; line = reader.readLine()) {
 
                 String[] fields = line.split(",", -1);
-                if (fields.length == 7) {
+                if (fields.length == 5) {
                     result.add(deserialize(fields, host));
                 }
             }
