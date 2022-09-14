@@ -70,8 +70,7 @@ public class Guest {
         this.phone = phone;
     }
 
-    @Override
     public String toString(){
-        return String.format("Panel{ id: %s%n section: %s%n row: %s%n column: %s%n year installed: %s%n  material: %s%n tracking: %s%n}", id, section, row, column, installationYear, material, isTracking);
+        return String.format("Guest: %s, %s Email: %s ", lastName, firstName, email);
     }
 }

@@ -1,6 +1,5 @@
 package learn.dontwreckmyhouse.data;
 
-import learn.dontwreckmyhouse.domain.Result;
 import learn.dontwreckmyhouse.models.Guest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;

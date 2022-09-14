@@ -63,7 +63,7 @@ public class Controller {
             view.displayResult(false, "Please pick a valid host.");
         } else {
             List<Reservation> reservations = reservationService.findByHost(host);
-            view.displayHeader(String.format("%s %s %s", host.getLastName(), host.getCity(), host.getState()));
+            view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
             view.displayReservations(reservations);
             view.enterToContinue();
         }

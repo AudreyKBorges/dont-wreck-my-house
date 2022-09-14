@@ -23,6 +23,9 @@ class ReservationFileRepositoryTest {
 
     private final ReservationFileRepository repository = new ReservationFileRepository(TEST_FILE_PATH);
 
+    private final String hostId = "3edda6bc-ab95-49a8-8962-d50b53f84b15";
+    private final int RESERVATION_COUNT = 0;
+
     @BeforeEach
     void setup() throws IOException {
         Path seedPath = Paths.get(SEED_FILE_PATH);
@@ -30,27 +33,25 @@ class ReservationFileRepositoryTest {
         Files.copy(seedPath, testPath, StandardCopyOption.REPLACE_EXISTING);
     }
 
-//    @Test
-//    void shouldAddReservation() throws DataException {
-//        Reservation reservation = new Reservation(1, LocalDate.of(2022, 9, 14),
-//                LocalDate.of(2022, 9, 20),
-//                new Guest(1, "John", "Smith", "johnsmith@gmail.com", "NY"),
-//                new Host("1", "Maria", "Garcia", "5123333030", "123 6th Street", "Austin", "TX", "78701", BigDecimal.valueOf(225.00), BigDecimal.valueOf(300.00)),
-//                BigDecimal.valueOf(1100.25));
-//        // create new guest
-//        reservation.setGuest();
-//        Reservation actual = repository.add(reservation);
-//        assertEquals(1, actual.getId());
-//        List<Reservation> all = repository.findAll();
-//        assertEquals(1, all.size());
-//    }
-
     @Test
-    void shouldFindAllReservations() {
+    void shouldAddReservation() throws DataException {
+        Reservation reservation = new Reservation();
+        Guest guest = new Guest();
+        Host host = new Host();
+        host.setId(hostId);
+        reservation.setGuest(guest);
+        Reservation entry = repository.add(reservation);
+        assertEquals(1, entry.getId());
+        List<Reservation> actual = repository.findByHost(host);
+        assertEquals(RESERVATION_COUNT, actual.size());
     }
 
     @Test
-    void shouldFindReservationsById() {
+    void shouldFindReservationsByHost() {
+        Host host = new Host();
+        host.setId(hostId);
+        List<Reservation> actual = repository.findByHost(host);
+        assertEquals(RESERVATION_COUNT, actual.size());
     }
 
     @Test

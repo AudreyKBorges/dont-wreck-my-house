@@ -72,4 +72,8 @@ public class Reservation {
     public void setTotal(BigDecimal total) {
         this.total = total;
     }
+
+    public String toString(){
+        return String.format("ID: %s, %s - %s %s", id, startDate, endDate, guest.toString());
+    }
 }
