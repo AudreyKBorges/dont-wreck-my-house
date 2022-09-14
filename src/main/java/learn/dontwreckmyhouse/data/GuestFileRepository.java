@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class GuestFileRepository implements GuestRepository {
     }
 
     @Override
-    public List<Guest> findAll() throws DataException {
+    public List<Guest> findAll() {
         List<Guest> result = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
 
@@ -39,8 +40,28 @@ public class GuestFileRepository implements GuestRepository {
         return result;
     }
 
+    private void writeAll(List<Guest> guests) throws DataException {
+        try (PrintWriter writer = new PrintWriter(filePath)) {
+
+            writer.println(HEADER);
+
+            for (Guest g : guests) {
+                String line = serialize(g);
+                writer.println(line);
+            }
+        } catch (IOException exception) {
+            throw new DataException("Could not write to file path" + filePath);
+        }
+    }
+
     @Override
-    public Guest findById(int id) throws DataException {
+    public Guest findById(int id) {
+        List<Guest> all = findAll();
+        for (Guest guest : all) {
+            if (guest.getId() == id) {
+                return guest;
+            }
+        }
         return null;
     }
 
@@ -54,5 +75,15 @@ public class GuestFileRepository implements GuestRepository {
         result.setState(fields[5]);
 
         return result;
+    }
+
+    private String serialize(Guest guest) {
+        return String.format("%s,%s,%s,%s,%s,%s",
+                guest.getId(),
+                guest.getFirstName(),
+                guest.getLastName(),
+                guest.getEmail(),
+                guest.getPhone(),
+                guest.getState());
     }
 }

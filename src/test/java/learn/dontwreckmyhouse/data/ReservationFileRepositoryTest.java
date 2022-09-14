@@ -35,15 +35,22 @@ class ReservationFileRepositoryTest {
 
     @Test
     void shouldAddReservation() throws DataException {
-        Reservation reservation = new Reservation();
-        Guest guest = new Guest();
         Host host = new Host();
         host.setId(hostId);
+
+        Reservation reservation = new Reservation();
+        reservation.setId(0);
+        reservation.setStartDate(LocalDate.of(2022,10,31));
+        reservation.setStartDate(LocalDate.of(2022,11,5));
+        reservation.setHost(host);
+
+        Guest guest = new Guest();
+        guest.setId(1);
+        reservation.setTotal(BigDecimal.valueOf(300));
+        reservation = repository.add(reservation);
         reservation.setGuest(guest);
-        Reservation entry = repository.add(reservation);
-        assertEquals(1, entry.getId());
-        List<Reservation> actual = repository.findByHost(host);
-        assertEquals(RESERVATION_COUNT, actual.size());
+
+        assertEquals(1, reservation.getId());
     }
 
     @Test
@@ -56,5 +63,6 @@ class ReservationFileRepositoryTest {
 
     @Test
     void shouldUpdateReservation() {
+
     }
 }
