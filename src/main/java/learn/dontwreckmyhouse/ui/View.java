@@ -2,13 +2,12 @@ package learn.dontwreckmyhouse.ui;
 
 import learn.dontwreckmyhouse.domain.Result;
 import learn.dontwreckmyhouse.models.Reservation;
+import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+@Component
 public class View {
     private final Scanner console = new Scanner(System.in);
 

@@ -6,7 +6,6 @@ import learn.dontwreckmyhouse.models.Reservation;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class Controller {
@@ -18,9 +17,9 @@ public class Controller {
         this.service = service;
     }
 
-    public void run() {
+    public void run() throws DataException {
         view.displayHeader("Welcome to Don't Wreck My House");
-        run();
+        runMenu();
         view.displayHeader("Goodbye.");
     }
 
@@ -48,9 +47,13 @@ public class Controller {
     // READ
     private void viewReservations() throws DataException {
         view.displayHeader(MenuOption.VIEW_RESERVATIONS.getTitle());
+        // prompt user for email
         String hostEmail = view.emailPrompt();
+        // find reservations by host email
         List<Reservation> reservations = service.findByHost(hostEmail);
+        // display host name and city
         view.displayHeader();
+        // display reservations for that host
         view.displayReservations(reservations);
     }
 
