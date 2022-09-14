@@ -6,6 +6,7 @@ import learn.dontwreckmyhouse.models.Reservation;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class Controller {
@@ -47,7 +48,11 @@ public class Controller {
     // READ
     private void viewReservations() throws DataException {
         view.displayHeader(MenuOption.VIEW_RESERVATIONS.getTitle());
-        List<Reservation> reservations = service.findByHost();
+        String hostEmail = view.emailPrompt();
+        List<Reservation> reservations = service.findByHost(hostEmail);
+        view.displayHeader();
         view.displayReservations(reservations);
     }
+
+
 }

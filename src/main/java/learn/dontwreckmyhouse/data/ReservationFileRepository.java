@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.io.*;
 import java.math.BigDecimal;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,10 @@ public class ReservationFileRepository implements ReservationRepository {
         return directory;
     }
 
+    private String getFilePath(Host host) {
+        return Paths.get(directory, host.getId() + ".csv").toString();
+    }
+
     // CREATE
     @Override
     public Reservation add(Reservation reservation) throws DataException {
@@ -41,7 +46,7 @@ public class ReservationFileRepository implements ReservationRepository {
     @Override
     public List<Reservation> findByHost(Host host) {
         ArrayList<Reservation> result = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(getDirectory()))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(getFilePath(host)))) {
 
             reader.readLine();
 
@@ -53,7 +58,7 @@ public class ReservationFileRepository implements ReservationRepository {
                 }
             }
         } catch (IOException ex) {
-            // don't throw on read
+
         }
         return result;
     }

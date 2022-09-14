@@ -6,6 +6,7 @@ import learn.dontwreckmyhouse.models.Reservation;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class View {
@@ -25,21 +26,20 @@ public class View {
         if(reservations == null || reservations.isEmpty()) {
             System.out.println("No reservations found");
         } else {
-            Stream<Reservation> reservationsStream = getReservations().stream();
-            reservationsStream.forEach(System.out::println);
-
-            getReservations().stream()
-                    .sorted()
-                    .forEach(System.out::println);
+            List<Reservation> reservationsList = reservations.stream().sorted().toList();
+            reservationsList.forEach(System.out::println);
         }
     }
 
     // Helper methods
-
     public void displayHeader(String message){
         System.out.println();
         System.out.println(message);
         System.out.println("=".repeat(message.length()));
+    }
+
+    public String emailPrompt() {
+        return readRequiredString("Host email: ");
     }
 
     public void displayResult(Result result) {
