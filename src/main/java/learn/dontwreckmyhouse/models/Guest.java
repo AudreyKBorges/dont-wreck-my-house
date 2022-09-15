@@ -1,7 +1,7 @@
 package learn.dontwreckmyhouse.models;
 
 public class Guest {
-    private int id;
+    private String id;
     private String firstName;
     private String lastName;
     private String email;
@@ -9,7 +9,7 @@ public class Guest {
     private String phone;
     private String state;
 
-    public Guest(int id, String firstName, String lastName, String email, String phone, String state) {
+    public Guest(String id, String firstName, String lastName, String email, String phone, String state) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -22,11 +22,11 @@ public class Guest {
 
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

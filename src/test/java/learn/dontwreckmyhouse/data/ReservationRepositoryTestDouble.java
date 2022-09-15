@@ -21,11 +21,11 @@ public class ReservationRepositoryTestDouble implements ReservationRepository {
 
     @Override
     public boolean updateReservation(Reservation reservation) {
-        return reservation.getId() > 0;
+        return true;
     }
 
     @Override
     public boolean deleteReservation(Reservation reservation) {
-        return reservation.getId() < 999;
+        return true;
     }
 }

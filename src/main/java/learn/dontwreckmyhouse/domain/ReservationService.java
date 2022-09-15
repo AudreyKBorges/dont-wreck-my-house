@@ -43,20 +43,16 @@ public class ReservationService {
             }
         }
 
-        if(entry.getId() > 0){
-            result.addMessage("Cannot create existing entry");
-        }
-
         if(result.isSuccess()){
             entry = reservationRepository.add(entry);
-            result.setReservation(entry);
+            result.setPayload(entry);
         }
         return result;
     }
 
     // READ
     public List<Reservation> findByHost(Host host) throws DataException {
-        Map<Integer, Guest> guestMap = guestRepository.findAll().stream()
+        Map<String, Guest> guestMap = guestRepository.findAll().stream()
                 .collect(Collectors.toMap(guest -> guest.getId(), guest -> guest));
         List<Reservation> result = reservationRepository.findByHost(host);
         for(Reservation reservation : result) {

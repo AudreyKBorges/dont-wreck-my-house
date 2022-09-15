@@ -5,14 +5,14 @@ import java.time.LocalDate;
 
 public class Reservation {
     // fields
-    private int id;
+    private String id;
     private LocalDate startDate;
     private LocalDate endDate;
     private Guest guest;
     private Host host;
     private BigDecimal total;
 
-    public Reservation(int id, LocalDate startDate, LocalDate endDate, Guest guest, Host host, BigDecimal total) {
+    public Reservation(String id, LocalDate startDate, LocalDate endDate, Guest guest, Host host, BigDecimal total) {
         this.id = id;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -25,11 +25,11 @@ public class Reservation {
 
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

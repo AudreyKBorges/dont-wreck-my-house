@@ -19,7 +19,6 @@ class GuestFileRepositoryTest {
 
     private final GuestFileRepository repository = new GuestFileRepository(TEST_FILE_PATH);
 
-
     @BeforeEach
     void setup() throws IOException {
         Path seedPath = Paths.get(SEED_FILE_PATH);
@@ -33,7 +32,7 @@ class GuestFileRepositoryTest {
         assertEquals(2, actual.size());
 
         Guest guest = actual.get(0);
-        assertEquals(1, guest.getId());
+        assertEquals("1", guest.getId());
         assertEquals("Sullivan", guest.getFirstName());
         assertEquals("Lomas", guest.getLastName());
         assertEquals("slomas0@mediafire.com", guest.getEmail());
@@ -41,7 +40,7 @@ class GuestFileRepositoryTest {
         assertEquals("NV", guest.getState());
 
         Guest guest2 = actual.get(1);
-        assertEquals(2, guest2.getId());
+        assertEquals("2", guest2.getId());
         assertEquals("Olympie", guest2.getFirstName());
         assertEquals("Gecks", guest2.getLastName());
         assertEquals("ogecks1@dagondesign.com", guest2.getEmail());
@@ -51,10 +50,10 @@ class GuestFileRepositoryTest {
 
     @Test
     void shouldFindGuestById() {
-        Guest actual = repository.findById(1);
+        Guest actual = repository.findById("1");
 
         assertNotNull(actual);
-        assertEquals(1, actual.getId());
+        assertEquals("1", actual.getId());
         assertEquals("Sullivan", actual.getFirstName());
         assertEquals("Lomas", actual.getLastName());
         assertEquals("slomas0@mediafire.com", actual.getEmail());
@@ -65,7 +64,7 @@ class GuestFileRepositoryTest {
     @Test
     void shouldAddGuest() {
         Guest guest = new Guest();
-        guest.setId(3);
+        guest.setId("3");
         guest.setFirstName("Cindy");
         guest.setLastName("Summers");
         guest.setEmail("cindysummers@gmail.com");
@@ -74,37 +73,11 @@ class GuestFileRepositoryTest {
 
         assertNotNull(guest);
 
-        assertEquals(3, guest.getId());
+        assertEquals("3", guest.getId());
         assertEquals("Cindy", guest.getFirstName());
         assertEquals("Summers", guest.getLastName());
         assertEquals("cindysummers@gmail.com", guest.getEmail());
         assertEquals("(802) 4442222", guest.getPhone());
         assertEquals("VT", guest.getState());
-    }
-
-    @Test
-    void shouldUpdateGuest() throws DataException {
-        Guest guest = repository.findById(2);
-        guest.setId(2);
-        guest.setFirstName("John");
-        guest.setLastName("Smith");
-        guest.setEmail("john@gmail.com");
-        guest.setPhone("(818) 8889999");
-        guest.setState("CA");
-
-        boolean result = repository.update(guest);
-
-        assertTrue(result);
-
-        guest = repository.findById(2);
-
-        assertNotNull(guest);
-
-        assertEquals(2, guest.getId());
-        assertEquals("John", guest.getFirstName());
-        assertEquals("Smith", guest.getLastName());
-        assertEquals("john@gmail.com", guest.getEmail());
-        assertEquals("(818) 8889999", guest.getPhone());
-        assertEquals("CA", guest.getState());
     }
 }

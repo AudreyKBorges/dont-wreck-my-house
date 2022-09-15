@@ -11,6 +11,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class HostFileRepository implements HostRepository {
@@ -45,7 +46,7 @@ public class HostFileRepository implements HostRepository {
     public Host findById(String id) throws DataException {
         List<Host> all = findAll();
         for (Host host : all) {
-            if (host.getId() == id) {
+            if (Objects.equals(host.getId(), id)) {
                 return host;
             }
         }
