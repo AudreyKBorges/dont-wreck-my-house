@@ -18,15 +18,16 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ReservationFileRepositoryTest {
-    static final String SEED_FILE_PATH = "./data/reservation-seed.csv";
-    static final String TEST_FILE_PATH = "./data/reservation-test.csv";
+    static final String SEED_FILE_PATH = "./data/reservations-data-test/reservations-seed-2e72f86c-b8fe-4265-b4f1-304dea8762db.csv";
+    static final String TEST_FILE_PATH = "./data/reservations-data-test/reservations-test-2e72f86c-b8fe-4265-b4f1-304dea8762db.csv";
 
-    static final String TEST_DIR_PATH = "./data/reservations_data_test";
+    static final String TEST_DIR_PATH = "./data/reservations-data-test";
 
     private final ReservationFileRepository repository = new ReservationFileRepository(TEST_DIR_PATH);
 
-    private final String hostId = "3edda6bc-ab95-49a8-8962-d50b53f84b15";
-    private final int RESERVATION_COUNT = 0;
+    private final String hostId = "2e72f86c-b8fe-4265-b4f1-304dea8762db";
+
+    private final int RESERVATION_COUNT = 1;
 
     @BeforeEach
     void setup() throws IOException {
@@ -57,10 +58,10 @@ class ReservationFileRepositoryTest {
 
     @Test
     void shouldFindReservationsByHost() {
-        Host host = new Host();
-        host.setId(hostId);
+        Host host = new Host(hostId, "Test", "gmail@gmail.com", "9999999999", "123 Main St", "Los Angeles", "CA", "91605", BigDecimal.valueOf(425), BigDecimal.valueOf(499));
         List<Reservation> actual = repository.findByHost(host);
-        assertEquals(RESERVATION_COUNT, actual.size());
+        assertNotNull(actual);
+        assertEquals(1, actual.size());
     }
 
 //    @Test

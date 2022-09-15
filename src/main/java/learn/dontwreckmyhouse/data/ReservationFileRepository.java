@@ -23,11 +23,7 @@ public class ReservationFileRepository implements ReservationRepository {
         this.directory = directory;
     }
 
-    public String getDirectory() {
-        return directory;
-    }
-
-    private String getFilePath(Host host) {
+    private String getDirectory(Host host) {
         return Paths.get(directory, host.getId() + ".csv").toString();
     }
 
@@ -49,7 +45,7 @@ public class ReservationFileRepository implements ReservationRepository {
         if(host == null || host.getId().isBlank() || host.getId() == null) {
             return result;
         }
-        try (BufferedReader reader = new BufferedReader(new FileReader(getFilePath(host)))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(getDirectory(host)))) {
 
             reader.readLine();
 
