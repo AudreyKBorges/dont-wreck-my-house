@@ -10,7 +10,7 @@ public class GuestRepositoryTestDouble implements GuestRepository {
     @Override
     public List<Guest> findAll() throws DataException {
         ArrayList<Guest> all = new ArrayList<>();
-        all.add(new Guest());
+        all.add(new Guest("1","Sullivan","Lomas","slomas0@mediafire.com","(702) 7768761","NV"));
         return all;
     }
 
