@@ -90,6 +90,16 @@ public class ReservationFileRepository implements ReservationRepository {
         return false;
     }
 
+    public Reservation findById(int id, Host host) throws DataException {
+        List<Reservation> all = findByHost(host);
+        for(Reservation reservation : all){
+            if(reservation.getId() == id){
+                return  reservation;
+            }
+        }
+        return null;
+    }
+
     private void writeToFile(List<Reservation> reservations, Host host) throws DataException {
         try(PrintWriter writer = new PrintWriter(directory)) {
             writer.println(HEADER);
