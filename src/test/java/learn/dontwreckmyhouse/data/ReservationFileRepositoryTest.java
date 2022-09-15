@@ -21,7 +21,9 @@ class ReservationFileRepositoryTest {
     static final String SEED_FILE_PATH = "./data/reservation-seed.csv";
     static final String TEST_FILE_PATH = "./data/reservation-test.csv";
 
-    private final ReservationFileRepository repository = new ReservationFileRepository(TEST_FILE_PATH);
+    static final String TEST_DIR_PATH = "./data/reservations_data_test";
+
+    private final ReservationFileRepository repository = new ReservationFileRepository(TEST_DIR_PATH);
 
     private final String hostId = "3edda6bc-ab95-49a8-8962-d50b53f84b15";
     private final int RESERVATION_COUNT = 0;
@@ -61,8 +63,29 @@ class ReservationFileRepositoryTest {
         assertEquals(RESERVATION_COUNT, actual.size());
     }
 
-    @Test
-    void shouldUpdateReservation() {
-
-    }
+//    @Test
+//    void shouldUpdateReservation() throws DataException {
+//        Host host = new Host();
+//        host.setId(hostId);
+//
+//        Reservation reservation = repository.findByHost(hostId);
+//        reservation.setId(0);
+//        reservation.setStartDate(LocalDate.of(2022,12,15));
+//        reservation.setStartDate(LocalDate.of(2022,12,18));
+//        reservation.setHost(host);
+//
+//        Guest guest = new Guest();
+//        guest.setId(50);
+//        reservation.setGuest(guest);
+//        reservation.setTotal(BigDecimal.valueOf(355));
+//        boolean result = repository.updateReservation(reservation);
+//
+//        assertTrue(result);
+//
+//        assertEquals(1, reservation.getId());
+//        assertEquals(LocalDate.of(2022,12,15), reservation.getStartDate());
+//        assertEquals(LocalDate.of(2022,12,18), reservation.getEndDate());
+//        assertEquals(200, reservation.getGuest().getId());
+//        assertEquals(BigDecimal.valueOf(355), reservation.getTotal());
+//    }
 }

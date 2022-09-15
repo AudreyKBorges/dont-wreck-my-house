@@ -2,15 +2,21 @@ package learn.dontwreckmyhouse.domain;
 
 import learn.dontwreckmyhouse.data.DataException;
 import learn.dontwreckmyhouse.data.GuestRepository;
+import learn.dontwreckmyhouse.data.HostRepository;
+import learn.dontwreckmyhouse.data.ReservationRepository;
 import learn.dontwreckmyhouse.models.Guest;
 import org.springframework.stereotype.Service;
 
 @Service
 public class GuestService {
     private final GuestRepository repository;
+    private final ReservationRepository reservationRepository;
+    private final HostRepository hostRepository;
 
-    public GuestService(GuestRepository repository) {
+    public GuestService(GuestRepository repository, ReservationRepository reservationRepository, HostRepository hostRepository) {
         this.repository = repository;
+        this.reservationRepository = reservationRepository;
+        this.hostRepository = hostRepository;
     }
 
     public Guest findByEmail(String email) throws DataException {

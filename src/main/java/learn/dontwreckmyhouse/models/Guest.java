@@ -70,6 +70,7 @@ public class Guest {
         this.phone = phone;
     }
 
+    @Override
     public String toString(){
         return String.format("Guest: %s, %s Email: %s ", lastName, firstName, email);
     }

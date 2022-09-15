@@ -38,7 +38,7 @@ public class ReservationFileRepository implements ReservationRepository {
         int nextId = getNextId(all);
         reservation.setId(nextId);
         all.add(reservation);
-        writeToFile(all);
+        writeToFile(all, reservation.getHost());
         return reservation;
     }
 
@@ -69,11 +69,11 @@ public class ReservationFileRepository implements ReservationRepository {
     // UPDATE
     @Override
     public boolean updateReservation(Reservation reservation)  throws DataException {
-        List<Reservation> entries = findByHost(reservation.getHost());
-        for (int i = 0; i < entries.size(); i++) {
-            if (entries.get(i).getId() == reservation.getId()) {
-                entries.set(i, reservation);
-                writeToFile(entries);
+        List<Reservation> all = findByHost(reservation.getHost());
+        for (int i = 0; i < all.size(); i++) {
+            if (all.get(i).getId() == reservation.getId()) {
+                all.set(i, reservation);
+                writeToFile(all, reservation.getHost());
                 return true;
             }
         }
@@ -83,18 +83,18 @@ public class ReservationFileRepository implements ReservationRepository {
     // DELETE
     @Override
     public boolean deleteReservation(Reservation reservation) throws DataException {
-        List<Reservation> entries = findByHost(reservation.getHost());
-        for(int i = 0; i < entries.size(); i++){
-            if(entries.get(i).getId() == Integer.parseInt(reservation.toString())){
-                entries.remove(i);
-                writeToFile(entries);
+        List<Reservation> all = findByHost(reservation.getHost());
+        for(int i = 0; i < all.size(); i++){
+            if(all.get(i).getId() == Integer.parseInt(reservation.toString())){
+                all.remove(i);
+                writeToFile(all, reservation.getHost());
                 return true;
             }
         }
         return false;
     }
 
-    private void writeToFile(List<Reservation> reservations) throws DataException {
+    private void writeToFile(List<Reservation> reservations, Host host) throws DataException {
         try(PrintWriter writer = new PrintWriter(directory)) {
             writer.println(HEADER);
             for(Reservation r : reservations) {

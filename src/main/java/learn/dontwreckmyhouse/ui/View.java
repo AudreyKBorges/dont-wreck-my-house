@@ -1,6 +1,5 @@
 package learn.dontwreckmyhouse.ui;
 
-import learn.dontwreckmyhouse.domain.Result;
 import learn.dontwreckmyhouse.models.Reservation;
 import org.springframework.stereotype.Component;
 

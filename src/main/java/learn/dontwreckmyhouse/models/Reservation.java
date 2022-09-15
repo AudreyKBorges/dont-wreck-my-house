@@ -73,7 +73,8 @@ public class Reservation {
         this.total = total;
     }
 
+    @Override
     public String toString(){
-        return String.format("ID: %s, %s - %s %s", id, startDate, endDate, guest.toString());
+        return String.format("ID: %s, %s - %s %s", id, startDate, endDate, guest);
     }
 }

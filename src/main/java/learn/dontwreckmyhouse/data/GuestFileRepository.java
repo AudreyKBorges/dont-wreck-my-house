@@ -40,7 +40,18 @@ public class GuestFileRepository implements GuestRepository {
         return result;
     }
 
-    private void writeAll(List<Guest> guests) throws DataException {
+    @Override
+    public Guest findById(int id) {
+        List<Guest> all = findAll();
+        for (Guest guest : all) {
+            if (guest.getId() == id) {
+                return guest;
+            }
+        }
+        return null;
+    }
+
+    private void writeToFile(List<Guest> guests) throws DataException {
         try (PrintWriter writer = new PrintWriter(filePath)) {
 
             writer.println(HEADER);
@@ -54,15 +65,38 @@ public class GuestFileRepository implements GuestRepository {
         }
     }
 
-    @Override
-    public Guest findById(int id) {
+    // CREATE
+
+    public Guest add(Guest guest) throws DataException {
         List<Guest> all = findAll();
-        for (Guest guest : all) {
-            if (guest.getId() == id) {
-                return guest;
+        int nextId = getNextId(all);
+        guest.setId(nextId);
+        all.add(guest);
+        writeToFile(all);
+        return guest;
+    }
+
+    // UPDATE
+    public boolean update(Guest guest) throws DataException {
+        List<Guest> all = findAll();
+        for(int i = 0; i < all.size(); i++){
+            if(all.get(i).getId() == guest.getId()){
+                all.set(i, guest);
+                writeToFile(all);
+                return true;
             }
         }
-        return null;
+        return false;
+    }
+
+    private int getNextId(List<Guest> guests){
+        int maxId = 0;
+        for(Guest guest : guests) {
+            if(maxId < guest.getId()){
+                maxId = guest.getId();
+            }
+        }
+        return maxId + 1;
     }
 
     private Guest deserialize(String[] fields) {

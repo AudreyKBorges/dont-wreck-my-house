@@ -60,7 +60,7 @@ public class Controller {
         String hostEmail = view.emailPrompt();
         Host host = hostService.findByEmail(hostEmail);
         if(host == null) {
-            view.displayResult(false, "Please pick a valid host.");
+            view.displayResult(false, "Please choose a valid host.");
         } else {
             List<Reservation> reservations = reservationService.findByHost(host);
             view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
