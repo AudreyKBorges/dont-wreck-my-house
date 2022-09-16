@@ -41,10 +41,10 @@ public class GuestFileRepository implements GuestRepository {
     }
 
     @Override
-    public Guest findById(String id) {
+    public Guest findById(int id) {
         List<Guest> all = findAll();
         for (Guest guest : all) {
-            if (guest.getId().equals(id)) {
+            if (guest.getId() == id) {
                 return guest;
             }
         }
@@ -69,7 +69,8 @@ public class GuestFileRepository implements GuestRepository {
 
     public Guest add(Guest guest) throws DataException {
         List<Guest> all = findAll();
-        guest.setId(java.util.UUID.randomUUID().toString());
+        int id = getNextId(all);
+        guest.setId(id);
         all.add(guest);
         writeToFile(all);
         return guest;
@@ -88,19 +89,19 @@ public class GuestFileRepository implements GuestRepository {
         return false;
     }
 
-//    private int getNextId(List<Guest> guests){
-//        int maxId = 0;
-//        for(Guest guest : guests) {
-//            if(maxId < guest.getId()){
-//                maxId = guest.getId();
-//            }
-//        }
-//        return maxId + 1;
-//    }
+    private int getNextId(List<Guest> guests){
+        int maxId = 0;
+        for(Guest guest : guests) {
+            if(maxId < guest.getId()){
+                maxId = guest.getId();
+            }
+        }
+        return maxId + 1;
+    }
 
     private Guest deserialize(String[] fields) {
         Guest result = new Guest();
-        result.setId(fields[0]);
+        result.setId(Integer.parseInt(fields[0]));
         result.setFirstName(fields[1]);
         result.setLastName(fields[2]);
         result.setEmail(fields[3]);

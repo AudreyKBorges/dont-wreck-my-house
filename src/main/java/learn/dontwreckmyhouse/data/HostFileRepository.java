@@ -46,7 +46,7 @@ public class HostFileRepository implements HostRepository {
     public Host findById(String id) throws DataException {
         List<Host> all = findAll();
         for (Host host : all) {
-            if (Objects.equals(host.getId(), id)) {
+            if (host.getId().equals(id)) {
                 return host;
             }
         }
@@ -93,6 +93,5 @@ public class HostFileRepository implements HostRepository {
                 host.getCity(),
                 host.getState(),
                 host.getPostalCode());
-
     }
 }

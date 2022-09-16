@@ -32,7 +32,7 @@ class GuestFileRepositoryTest {
         assertEquals(2, actual.size());
 
         Guest guest = actual.get(0);
-        assertEquals("1", guest.getId());
+        assertEquals(1, guest.getId());
         assertEquals("Sullivan", guest.getFirstName());
         assertEquals("Lomas", guest.getLastName());
         assertEquals("slomas0@mediafire.com", guest.getEmail());
@@ -40,7 +40,7 @@ class GuestFileRepositoryTest {
         assertEquals("NV", guest.getState());
 
         Guest guest2 = actual.get(1);
-        assertEquals("2", guest2.getId());
+        assertEquals(2, guest2.getId());
         assertEquals("Olympie", guest2.getFirstName());
         assertEquals("Gecks", guest2.getLastName());
         assertEquals("ogecks1@dagondesign.com", guest2.getEmail());
@@ -50,10 +50,10 @@ class GuestFileRepositoryTest {
 
     @Test
     void shouldFindGuestById() {
-        Guest actual = repository.findById("1");
+        Guest actual = repository.findById(1);
 
         assertNotNull(actual);
-        assertEquals("1", actual.getId());
+        assertEquals(1, actual.getId());
         assertEquals("Sullivan", actual.getFirstName());
         assertEquals("Lomas", actual.getLastName());
         assertEquals("slomas0@mediafire.com", actual.getEmail());
@@ -64,7 +64,7 @@ class GuestFileRepositoryTest {
     @Test
     void shouldAddGuest() {
         Guest guest = new Guest();
-        guest.setId("3");
+        guest.setId(3);
         guest.setFirstName("Cindy");
         guest.setLastName("Summers");
         guest.setEmail("cindysummers@gmail.com");
@@ -73,7 +73,7 @@ class GuestFileRepositoryTest {
 
         assertNotNull(guest);
 
-        assertEquals("3", guest.getId());
+        assertEquals(3, guest.getId());
         assertEquals("Cindy", guest.getFirstName());
         assertEquals("Summers", guest.getLastName());
         assertEquals("cindysummers@gmail.com", guest.getEmail());

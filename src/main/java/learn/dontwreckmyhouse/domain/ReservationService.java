@@ -9,6 +9,7 @@ import learn.dontwreckmyhouse.models.Host;
 import learn.dontwreckmyhouse.models.Reservation;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,37 +53,41 @@ public class ReservationService {
 
     // READ
     public List<Reservation> findByHost(Host host) throws DataException {
-        Map<String, Guest> guestMap = guestRepository.findAll().stream()
+        Map<Integer, Guest> guestMap = guestRepository.findAll().stream()
                 .collect(Collectors.toMap(guest -> guest.getId(), guest -> guest));
         List<Reservation> result = reservationRepository.findByHost(host);
         for(Reservation reservation : result) {
             reservation.setGuest(guestMap.get(reservation.getGuest().getId()));
-            return result;
         }
         return result;
     }
 
     // UPDATE
-    public Result updateReservation(Reservation entry) throws DataException {
-        Result result = validate(entry);
-        if(!result.isSuccess()){
-            return result;
-        }
+    public Result<Reservation> updateReservation(Reservation entry) throws DataException {
+        Result<Reservation> result = validate(entry);
+
         boolean updated = reservationRepository.updateReservation(entry);
 
         if(!updated){
             result.addMessage(String.format("Reservation entry with id %s does not exist", entry.getId()));
         }
 
+        result.setPayload(entry);
+
         return result;
     }
 
     // DELETE
-    public Result deleteReservation(Reservation reservation) throws DataException {
-        Result result = new Result();
-        if(!reservationRepository.deleteReservation(reservation)){
-            result.addMessage(String.format("Reservation entry with id %s does not exist.", reservation));
+    public Result<Reservation> deleteReservation(Reservation entry) throws DataException {
+        Result<Reservation> result = new Result<>();
+        if(!reservationRepository.deleteReservation(entry)){
+            result.addMessage(String.format("Reservation entry with id %s does not exist.", entry.getId()));
         }
+        if(entry.getStartDate().isBefore(LocalDate.now())) {
+            result.addMessage("Cannot cancel a reservation that is in the past");
+        }
+        result.setPayload(entry);
+
         return result;
     }
 
@@ -106,21 +111,28 @@ public class ReservationService {
             result.addMessage("Start date is required.");
             return result;
         }
-        if(entry.getEndDate() == null){
+        if(entry.getEndDate() == null) {
             result.addMessage("End date is required.");
             return result;
         }
-        if(entry.getEndDate().isBefore(entry.getStartDate())){
-            result.addMessage("End date cannot come before start date.");
-            return result;
+        for(Reservation reservation : entries) {
+            if(entry.getStartDate().isBefore(reservation.getStartDate()) && entry.getEndDate().isAfter(reservation.getStartDate())) {
+                result.addMessage("Reservation cannot overlap existing reservation dates");
+                return result;
+            }
+            if(entry.getStartDate().isBefore(reservation.getEndDate()) && entry.getEndDate().isAfter(reservation.getEndDate())) {
+                result.addMessage("Reservation cannot overlap existing reservation dates");
+                return result;
+            }
+            if(entry.getStartDate().isAfter(reservation.getStartDate()) && entry.getEndDate().isBefore(reservation.getEndDate())) {
+                result.addMessage("Reservation cannot overlap existing reservation dates");
+                return result;
+            }
+            if(entry.getStartDate().isAfter(entry.getEndDate())) {
+                result.addMessage("Start date cannot be after end date");
+                return result;
+            }
         }
-
-        // The reservation may never overlap existing reservation dates.
-
-        // Cannot cancel a reservation that's in the past.
-
-        // The start date must be in the future.
-
         return result;
     }
 }

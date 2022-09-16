@@ -40,13 +40,13 @@ class ReservationFileRepositoryTest {
         host.setId(hostId);
 
         Reservation reservation = new Reservation();
-        reservation.setId("0");
+        reservation.setId(0);
         reservation.setStartDate(LocalDate.of(2022,10,31));
         reservation.setEndDate(LocalDate.of(2022,11,5));
         reservation.setHost(host);
 
         Guest guest = new Guest();
-        guest.setId("1");
+        guest.setId(1);
         reservation.setTotal(BigDecimal.valueOf(300));
         reservation.setGuest(guest);
         reservation = repository.add(reservation);
@@ -75,7 +75,7 @@ class ReservationFileRepositoryTest {
         reservation.setHost(host);
 
         Guest guest = new Guest();
-        guest.setId("50");
+        guest.setId(50);
         reservation.setGuest(guest);
         reservation.setTotal(BigDecimal.valueOf(355));
         boolean result = repository.updateReservation(reservation);
@@ -85,7 +85,7 @@ class ReservationFileRepositoryTest {
 //        assertEquals("1", reservation.getId());
         assertEquals(LocalDate.of(2022,12,15), reservation.getStartDate());
         assertEquals(LocalDate.of(2022,12,18), reservation.getEndDate());
-        assertEquals("50", reservation.getGuest().getId());
+        assertEquals(50, reservation.getGuest().getId());
         assertEquals(BigDecimal.valueOf(355), reservation.getTotal());
     }
 
