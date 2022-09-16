@@ -74,7 +74,12 @@ class ReservationServiceTest {
     }
 
     @Test
-    void shouldNotAddReservationWithNullHost() {
+    void shouldNotAddReservationWithNullHost() throws DataException {
+        Reservation reservation = null;
+        Result actual = service.add(reservation);
 
+        assertFalse(actual.isSuccess());
+        assertEquals(1, actual.getMessages().size());
+        assertEquals("Reservation entry cannot be null.", actual.getMessages().get(0));
     }
 }
