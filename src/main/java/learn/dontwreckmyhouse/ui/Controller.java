@@ -71,6 +71,14 @@ public class Controller {
 
     private void makeReservation() {
         view.displayHeader(MenuOption.MAKE_RESERVATION.getTitle());
+        // prompt user for start date
+        view.userStartDate();
+        // prompt user for end date
+        view.userEndDate();
+        // show summary(header) with dates, total
+        view.displayHeader("Summary");
+        // Ask user Is this okay? [y/n]:
+        // Display message as a header, ie: Success
     }
 
 }

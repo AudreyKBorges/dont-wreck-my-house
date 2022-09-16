@@ -57,7 +57,7 @@ class ReservationServiceTest {
 //    }
 
     @Test
-    void shouldNotReservationWithAddOverlappingDates() throws DataException {
+    void shouldNotMakeReservationWithAddOverlappingDates() throws DataException {
         Reservation reservation = new Reservation();
         reservation.setId(0);
         reservation.setHost(HostRepositoryTestDouble.HOST);

@@ -45,6 +45,14 @@ public class View {
         return readRequiredString("Host email: ");
     }
 
+    public String userStartDate() {
+        return readRequiredString("Start (MM/DD/YYYY): ");
+    }
+
+    public String userEndDate() {
+        return readRequiredString("End (MM/DD/YYYY): ");
+    }
+
     public void displayResult(boolean success, String message) {
         displayResult(success, List.of(message));
     }
