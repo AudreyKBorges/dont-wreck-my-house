@@ -1,12 +1,13 @@
 package learn.dontwreckmyhouse.models;
 
+import learn.dontwreckmyhouse.data.ReservationFileRepository;
+import learn.dontwreckmyhouse.data.ReservationRepository;
+import learn.dontwreckmyhouse.domain.ReservationService;
 import org.springframework.cglib.core.Local;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.List;
 
 public class Reservation {
     // fields
@@ -38,17 +39,14 @@ public class Reservation {
     public void setCalculateTotal(BigDecimal calculateTotal) {
         this.calculateTotal = calculateTotal;
     }
-    public BigDecimal getCalculateTotal(String startDate, String endDate) {
-//        logic-wise, I would suggest creating a loop that add a day to the starting day
-//        until starting day is the ending day, then for each day, check what day of the week it is.
-//        if its a weekday, add the standard rate to the total, and if it is weekend day, add the
-//        weekend rate to the total.
-        LocalDate startingDay = LocalDate.from(getStartDate());
-        LocalDate endingDay = LocalDate.from(getEndDate());
-        BigDecimal standardRate = new BigDecimal(String.valueOf(host.getStandardRate())).
-                setScale(4, RoundingMode.HALF_UP);
-        BigDecimal weekendRate = new BigDecimal(String.valueOf(host.getWeekendRate())).
-                setScale(4, RoundingMode.HALF_UP);
+    public BigDecimal getCalculateTotal(LocalDate startDate, LocalDate endDate) {
+        LocalDate startingDay = LocalDate.from(startDate);
+        LocalDate endingDay = LocalDate.from(endDate);
+//        public final ReservationService reservationService;
+//        Host host = reservationService.findByHost(host);
+        Host host = new Host();
+        BigDecimal standardRate = host.getStandardRate();
+        BigDecimal weekendRate = host.getWeekendRate();
 
         if (total == null) {
             return BigDecimal.ZERO;

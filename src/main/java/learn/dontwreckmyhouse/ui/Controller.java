@@ -5,11 +5,13 @@ import learn.dontwreckmyhouse.domain.GuestService;
 import learn.dontwreckmyhouse.domain.HostService;
 import learn.dontwreckmyhouse.domain.ReservationService;
 import learn.dontwreckmyhouse.domain.Result;
-import learn.dontwreckmyhouse.models.Guest;
 import learn.dontwreckmyhouse.models.Host;
 import learn.dontwreckmyhouse.models.Reservation;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.List;
 
 @Component
@@ -86,15 +88,23 @@ public class Controller {
             view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
             view.displayReservations(reservations);
         }
+
+        DateTimeFormatter df = new DateTimeFormatterBuilder().parseCaseInsensitive()
+                .append(DateTimeFormatter.ofPattern("MM/dd/yyyy")).toFormatter();
         // prompt user for start date
         String userStartDate = view.userStartDate();
+        LocalDate date1 = LocalDate.parse(userStartDate, df);
         // prompt user for end date
         String userEndDate = view.userEndDate();
+        LocalDate date2 = LocalDate.parse(userEndDate, df);
         Reservation reservation = new Reservation();
+
         reservationService.validate(reservation);
         // show summary(header) with dates, total
         view.displayHeader("Summary");
-        reservation.getCalculateTotal(userStartDate, userEndDate);
+        view.displayText(String.format("Start (MM/dd/yyyy): %s, ", date1));
+        view.displayText(String.format("End (MM/dd/yyyy): %s, ", date2));
+        view.displayText(String.format("Total: %s", reservation.getCalculateTotal(date1, date2)));
         // Ask user Is this okay? [y/n]:
         view.userPrompt();
         // Display message as a header, ie: Success/Error
@@ -116,10 +126,10 @@ public class Controller {
         // ask user to confirm
     }
 
-    private void cancelReservation() {
+    private void cancelReservation() throws DataException {
         view.displayHeader(MenuOption.CANCEL_RESERVATION.getTitle());
         // find a reservation
-        // on success, display a message
+        // display a message
     }
 
 }
