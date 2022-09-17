@@ -41,8 +41,11 @@ public class View {
         System.out.println("=".repeat(message.length()));
     }
 
-    public String emailPrompt() {
+    public String hostEmailPrompt() {
         return readRequiredString("Host email: ");
+    }
+    public String guestEmailPrompt() {
+        return readRequiredString("Guest email: ");
     }
 
     public String userStartDate() {
@@ -51,6 +54,10 @@ public class View {
 
     public String userEndDate() {
         return readRequiredString("End (MM/DD/YYYY): ");
+    }
+
+    public String userPrompt() {
+        return readRequiredString("Is this okay? [y/n]: ");
     }
 
     public void displayResult(boolean success, String message) {

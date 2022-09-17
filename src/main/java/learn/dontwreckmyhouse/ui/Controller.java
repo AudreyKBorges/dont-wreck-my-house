@@ -4,6 +4,8 @@ import learn.dontwreckmyhouse.data.DataException;
 import learn.dontwreckmyhouse.domain.GuestService;
 import learn.dontwreckmyhouse.domain.HostService;
 import learn.dontwreckmyhouse.domain.ReservationService;
+import learn.dontwreckmyhouse.domain.Result;
+import learn.dontwreckmyhouse.models.Guest;
 import learn.dontwreckmyhouse.models.Host;
 import learn.dontwreckmyhouse.models.Reservation;
 import org.springframework.stereotype.Component;
@@ -46,8 +48,10 @@ public class Controller {
                     makeReservation();
                     break;
                 case EDIT_RESERVATION:
+                    editReservation();
                     break;
                 case CANCEL_RESERVATION:
+                    cancelReservation();
                     break;
             }
         } while (option != MenuOption.EXIT);
@@ -57,7 +61,7 @@ public class Controller {
     private void viewByHost() throws DataException {
         view.displayHeader(MenuOption.VIEW_RESERVATIONS.getTitle());
         // prompt user for email
-        String hostEmail = view.emailPrompt();
+        String hostEmail = view.hostEmailPrompt();
         Host host = hostService.findByEmail(hostEmail);
         if(host == null) {
             view.displayResult(false, "Please choose a valid host.");
@@ -69,16 +73,53 @@ public class Controller {
         }
     }
 
-    private void makeReservation() {
+    private void makeReservation() throws DataException {
         view.displayHeader(MenuOption.MAKE_RESERVATION.getTitle());
+        String guestEmail = view.guestEmailPrompt();
+        guestService.findByEmail(guestEmail);
+        String hostEmail = view.hostEmailPrompt();
+        Host host = hostService.findByEmail(hostEmail);
+        if(host == null) {
+            view.displayResult(false, "Please choose a valid host.");
+        } else {
+            List<Reservation> reservations = reservationService.findByHost(host);
+            view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
+            view.displayReservations(reservations);
+        }
         // prompt user for start date
-        view.userStartDate();
+        String userStartDate = view.userStartDate();
         // prompt user for end date
-        view.userEndDate();
+        String userEndDate = view.userEndDate();
+        Reservation reservation = new Reservation();
+        reservationService.validate(reservation);
         // show summary(header) with dates, total
         view.displayHeader("Summary");
+        reservation.getCalculateTotal(userStartDate, userEndDate);
         // Ask user Is this okay? [y/n]:
-        // Display message as a header, ie: Success
+        view.userPrompt();
+        // Display message as a header, ie: Success/Error
+
+        Result<Reservation> result = reservationService.add(reservation);
+        if (!result.isSuccess()) {
+            view.displayResult(false, result.getMessages());
+        } else {
+            String successMessage = String.format("Reservation %s created.", result.getPayload().getId());
+            view.displayResult(true, successMessage);
+        }
+    }
+
+    private void editReservation() {
+        view.displayHeader(MenuOption.EDIT_RESERVATION.getTitle());
+        // find a reservation
+        // start and end date can be edited
+        // recalculate the total & display a summary
+        // ask user to confirm
+    }
+
+    private void cancelReservation() {
+        view.displayHeader(MenuOption.CANCEL_RESERVATION.getTitle());
+        // find a reservation
+        // on success, display a message
     }
 
 }

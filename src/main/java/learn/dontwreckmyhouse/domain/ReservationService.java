@@ -66,6 +66,10 @@ public class ReservationService {
     public Result<Reservation> updateReservation(Reservation entry) throws DataException {
         Result<Reservation> result = validate(entry);
 
+        if(!result.isSuccess()) {
+           return result;
+        }
+
         boolean updated = reservationRepository.updateReservation(entry);
 
         if(!updated){
@@ -80,31 +84,31 @@ public class ReservationService {
     // DELETE
     public Result<Reservation> deleteReservation(Reservation entry) throws DataException {
         Result<Reservation> result = new Result<>();
-        if(!reservationRepository.deleteReservation(entry)){
-            result.addMessage(String.format("Reservation entry with id %s does not exist.", entry.getId()));
-        }
         if(entry.getStartDate().isBefore(LocalDate.now())) {
             result.addMessage("Cannot cancel a reservation that is in the past");
+            return result;
+        }
+        if(!reservationRepository.deleteReservation(entry)){
+            result.addMessage(String.format("Reservation entry with id %s does not exist.", entry.getId()));
         }
         result.setPayload(entry);
 
         return result;
     }
 
-    public Result validate(Reservation entry){
+    public Result validate(Reservation entry) throws DataException {
         Result result = new Result();
-        ArrayList<Reservation> entries = new ArrayList<>();
-        // Guest, host, and start and end dates are required.
+        List<Reservation> entries = findByHost(entry.getHost());
         if(entry == null){
             result.addMessage("Reservation entry cannot be null.");
             return result;
         }
         if(entry.getHost() == null) {
-            result.addMessage("Host cannot be null.");
+            result.addMessage("Host email cannot be null.");
             return result;
         }
         if(entry.getGuest() == null) {
-            result.addMessage("Guest cannot be null.");
+            result.addMessage("Guest email cannot be null.");
             return result;
         }
         if(entry.getStartDate() == null){
@@ -115,7 +119,15 @@ public class ReservationService {
             result.addMessage("End date is required.");
             return result;
         }
+        if(entry.getStartDate().isBefore(LocalDate.now())) {
+            result.addMessage("Cannot cancel a reservation that is in the past");
+            return result;
+        }
         for(Reservation reservation : entries) {
+            if(entry.getStartDate().equals(reservation.getStartDate()) && entry.getEndDate().equals(reservation.getEndDate())) {
+                result.addMessage("Reservation cannot overlap existing reservation dates");
+                return result;
+            }
             if(entry.getStartDate().isBefore(reservation.getStartDate()) && entry.getEndDate().isAfter(reservation.getStartDate())) {
                 result.addMessage("Reservation cannot overlap existing reservation dates");
                 return result;

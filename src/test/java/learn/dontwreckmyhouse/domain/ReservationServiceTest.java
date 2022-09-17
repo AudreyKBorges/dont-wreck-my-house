@@ -9,8 +9,6 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.function.BooleanSupplier;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class ReservationServiceTest {
@@ -20,7 +18,7 @@ class ReservationServiceTest {
             new HostRepositoryTestDouble());
 
     public static Host host = new Host("3edda6bc-ab95-49a8-8962-d50b53f84b15","Yearnes"," ","(806) 1783815","3 Nova Trail","Amarillo","TX","79182", BigDecimal.valueOf(Double.parseDouble(String.valueOf(340))),BigDecimal.valueOf(Double.parseDouble(String.valueOf(425))));
-
+    public static Host host2 = new Host("3edda6bc-ab95-49a8-8962-d50b53f84b15","Yearnes",null,"(806) 1783815","3 Nova Trail","Amarillo","TX","79182", BigDecimal.valueOf(Double.parseDouble(String.valueOf(340))),BigDecimal.valueOf(Double.parseDouble(String.valueOf(425))));
     @Test
     void shouldAddReservation() throws DataException {
         Reservation reservation = new Reservation();
@@ -61,7 +59,7 @@ class ReservationServiceTest {
     }
 
     @Test
-    void shouldNotMakeReservationWithAddOverlappingDates() throws DataException {
+    void shouldNotMakeReservationWithOverlappingDates() throws DataException {
         Reservation reservation = new Reservation();
         reservation.setId(0);
         reservation.setHost(HostRepositoryTestDouble.HOST);
@@ -79,8 +77,16 @@ class ReservationServiceTest {
 
     @Test
     void shouldNotAddReservationWithNullHostEmail() throws DataException {
-        Reservation reservation = null;
+        Reservation reservation = new Reservation();
         Result actual = service.add(reservation);
+        reservation.setId(0);
+        reservation.setHost(host2);
+        reservation.setStartDate(LocalDate.of(2022,10,10));
+        reservation.setEndDate(LocalDate.of(2022,10,12));
+        Guest guest = new Guest();
+        guest.setId(1);
+        reservation.setGuest(guest);
+        reservation.setTotal(BigDecimal.valueOf(300));
 
         assertFalse(actual.isSuccess());
         assertEquals(1, actual.getMessages().size());
@@ -108,22 +114,12 @@ class ReservationServiceTest {
         Reservation reservation = new Reservation();
         reservation.setId(0);
         reservation.setHost(HostRepositoryTestDouble.HOST);
-        reservation.setStartDate(LocalDate.of(2022,10,10));
-        reservation.setEndDate(LocalDate.of(2022,10,10));
+        reservation.setStartDate(LocalDate.of(2022,10,31));
+        reservation.setEndDate(LocalDate.of(2022,11,5));
         Guest guest = new Guest();
         guest.setId(1);
         reservation.setGuest(guest);
         reservation.setTotal(BigDecimal.valueOf(300));
-
-//        Reservation reservation2 = new Reservation();
-//        reservation2.setId(0);
-//        reservation2.setHost(HostRepositoryTestDouble.HOST);
-//        reservation2.setStartDate(LocalDate.of(2022,10,10));
-//        reservation2.setEndDate(LocalDate.of(2022,10,12));
-//        Guest guest2 = new Guest();
-//        guest.setId(1);
-//        reservation2.setGuest(guest2);
-//        reservation2.setTotal(BigDecimal.valueOf(300));
 
         Result<Reservation> result = service.add(reservation);
         assertFalse(result.isSuccess());
@@ -137,7 +133,7 @@ class ReservationServiceTest {
     @Test
     void shouldNotUpdateNonExisting() throws DataException {
         Reservation reservation = new Reservation();
-        reservation.setId(0);
+        reservation.setId(999);
         reservation.setHost(HostRepositoryTestDouble.HOST);
         reservation.setStartDate(LocalDate.of(2023,1,10));
         reservation.setEndDate(LocalDate.of(2023,1,12));
@@ -146,7 +142,7 @@ class ReservationServiceTest {
         reservation.setGuest(guest);
         reservation.setTotal(BigDecimal.valueOf(300));
 
-        Result result = service.updateReservation(ReservationRepositoryTestDouble.RESERVATION);
+        Result result = service.updateReservation(reservation);
         assertFalse(result.isSuccess());
     }
     @Test
@@ -177,7 +173,7 @@ class ReservationServiceTest {
         reservation.setGuest(guest);
         reservation.setTotal(BigDecimal.valueOf(300));
 
-        Result result = service.deleteReservation(ReservationRepositoryTestDouble.RESERVATION);
+        Result result = service.deleteReservation(reservation);
         assertFalse(result.isSuccess());
     }
 
