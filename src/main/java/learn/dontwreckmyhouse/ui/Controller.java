@@ -5,6 +5,7 @@ import learn.dontwreckmyhouse.domain.GuestService;
 import learn.dontwreckmyhouse.domain.HostService;
 import learn.dontwreckmyhouse.domain.ReservationService;
 import learn.dontwreckmyhouse.domain.Result;
+import learn.dontwreckmyhouse.models.Guest;
 import learn.dontwreckmyhouse.models.Host;
 import learn.dontwreckmyhouse.models.Reservation;
 import org.springframework.stereotype.Component;
@@ -104,26 +105,42 @@ public class Controller {
         view.displayHeader("Summary");
         view.displayText(String.format("Start (MM/dd/yyyy): %s, ", date1));
         view.displayText(String.format("End (MM/dd/yyyy): %s, ", date2));
-        view.displayText(String.format("Total: %s", reservation.getCalculateTotal(date1, date2)));
+        view.displayText(String.format("Total: %s", reservation.getCalculateTotal()));
         // Ask user Is this okay? [y/n]:
         view.userPrompt();
         // Display message as a header, ie: Success/Error
 
-        Result<Reservation> result = reservationService.add(reservation);
+        Result result = reservationService.add(reservation);
         if (!result.isSuccess()) {
             view.displayResult(false, result.getMessages());
         } else {
-            String successMessage = String.format("Reservation %s created.", result.getPayload().getId());
+            String successMessage = String.format("Reservation %s created.", result.getPayload());
             view.displayResult(true, successMessage);
         }
     }
 
-    private void editReservation() {
+    private void editReservation() throws DataException {
         view.displayHeader(MenuOption.EDIT_RESERVATION.getTitle());
         // find a reservation
         // start and end date can be edited
         // recalculate the total & display a summary
         // ask user to confirm
+        String hostEmail = view.hostEmailPrompt();
+        Host host = hostService.findByEmail(hostEmail);
+        if(host == null) {
+            return;
+        } else {
+            String guestEmail = view.guestEmailPrompt();
+            Guest guest = guestService.findByEmail(guestEmail);
+            if(guest == null) {
+                return;
+            }
+            List<Reservation> reservations = reservationService.findByHost(host);
+            view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
+            view.displayReservations(reservations);
+
+//            Reservation updateReservation = reservationService.findByHost()
+        }
     }
 
     private void cancelReservation() throws DataException {

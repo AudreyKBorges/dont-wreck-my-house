@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,6 +30,30 @@ public class ReservationService {
         this.reservationRepository = reservationRepository;
         this.guestRepository = guestRepository;
         this.hostRepository = hostRepository;
+    }
+
+    private static boolean isStandardRate(LocalDate weekDay) {
+        DayOfWeek day = DayOfWeek.of(weekDay.get(ChronoField.DAY_OF_WEEK));
+        return day == DayOfWeek.MONDAY || day == DayOfWeek.TUESDAY ||
+                day == DayOfWeek.WEDNESDAY || day == DayOfWeek.THURSDAY || day == DayOfWeek.FRIDAY;
+    }
+    public BigDecimal calculateTotal(Reservation reservation) {
+
+        int days = (int) ChronoUnit.DAYS.between(reservation.getStartDate(), reservation.getEndDate());
+        BigDecimal standardRate = reservation.getHost().getWeekendRate();
+        BigDecimal weekendRate = reservation.getHost().getStandardRate();
+
+        if(isStandardRate(LocalDate.ofEpochDay(days))) {
+            standardRate = reservation.getHost().getStandardRate().multiply(BigDecimal.valueOf(days));
+        }
+        if(!isStandardRate(LocalDate.ofEpochDay(days))) {
+            weekendRate = reservation.getHost().getWeekendRate().multiply(BigDecimal.valueOf(days));
+        }
+
+        BigDecimal total = standardRate.add(weekendRate);
+        reservation.setTotal(total);
+
+        return total;
     }
 
     public Result add(Reservation entry) throws DataException {

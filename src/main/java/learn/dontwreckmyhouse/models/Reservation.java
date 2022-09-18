@@ -39,29 +39,7 @@ public class Reservation {
     public void setCalculateTotal(BigDecimal calculateTotal) {
         this.calculateTotal = calculateTotal;
     }
-    public BigDecimal getCalculateTotal(LocalDate startDate, LocalDate endDate) {
-        LocalDate startingDay = LocalDate.from(startDate);
-        LocalDate endingDay = LocalDate.from(endDate);
-//        public final ReservationService reservationService;
-//        Host host = reservationService.findByHost(host);
-        Host host = new Host();
-        BigDecimal standardRate = host.getStandardRate();
-        BigDecimal weekendRate = host.getWeekendRate();
-
-        if (total == null) {
-            return BigDecimal.ZERO;
-        }
-
-        for (; startingDay.compareTo(endingDay) <= 0; startingDay = startingDay.plusDays(1)) {
-            if (startingDay.equals(DayOfWeek.MONDAY) || startingDay.equals(DayOfWeek.TUESDAY) ||
-                    startingDay.equals(DayOfWeek.WEDNESDAY) || startingDay.equals(DayOfWeek.THURSDAY) ||
-                    startingDay.equals(DayOfWeek.FRIDAY)) {
-                return standardRate.add(total);
-            }
-            if (startingDay.equals(DayOfWeek.SATURDAY) || startingDay.equals(DayOfWeek.SUNDAY)) {
-                return weekendRate.add(total);
-            }
-        }
+    public BigDecimal getCalculateTotal() {
         return total;
     }
 
