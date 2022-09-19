@@ -38,22 +38,17 @@ public class ReservationService {
                 day == DayOfWeek.WEDNESDAY || day == DayOfWeek.THURSDAY || day == DayOfWeek.FRIDAY;
     }
     public BigDecimal calculateTotal(Reservation reservation) {
+LocalDate day = reservation.getStartDate();
+        BigDecimal totalCost = BigDecimal.ZERO;
+        do{
+            // is today a weekend or standard day?
+            totalCost = isStandardRate(day) ?
+                    totalCost.add(reservation.getHost().getWeekendRate()) :
+                    totalCost.add(reservation.getHost().getStandardRate());
+            day = day.plusDays(1);
+        }while(day.isBefore(reservation.getEndDate()));
 
-        int days = (int) ChronoUnit.DAYS.between(reservation.getStartDate(), reservation.getEndDate());
-        BigDecimal standardRate = reservation.getHost().getWeekendRate();
-        BigDecimal weekendRate = reservation.getHost().getStandardRate();
-
-        if(isStandardRate(LocalDate.ofEpochDay(days))) {
-            standardRate = reservation.getHost().getStandardRate().multiply(BigDecimal.valueOf(days));
-        }
-        if(!isStandardRate(LocalDate.ofEpochDay(days))) {
-            weekendRate = reservation.getHost().getWeekendRate().multiply(BigDecimal.valueOf(days));
-        }
-
-        BigDecimal total = standardRate.add(weekendRate);
-        reservation.setTotal(total);
-
-        return total;
+        reservation.setTotal(totalCost);
     }
 
     public Result add(Reservation entry) throws DataException {
