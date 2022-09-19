@@ -90,7 +90,7 @@ public class ReservationFileRepository implements ReservationRepository {
         return false;
     }
 
-    public Reservation findById(int id, Host host) throws DataException {
+    public Reservation findById(int id, Host host) {
         List<Reservation> all = findByHost(host);
         for(Reservation reservation : all){
             if(reservation.getId() == id) {

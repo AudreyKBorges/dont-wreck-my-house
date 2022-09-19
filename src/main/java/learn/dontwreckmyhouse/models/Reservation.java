@@ -1,12 +1,6 @@
 package learn.dontwreckmyhouse.models;
 
-import learn.dontwreckmyhouse.data.ReservationFileRepository;
-import learn.dontwreckmyhouse.data.ReservationRepository;
-import learn.dontwreckmyhouse.domain.ReservationService;
-import org.springframework.cglib.core.Local;
-
 import java.math.BigDecimal;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 
 public class Reservation {

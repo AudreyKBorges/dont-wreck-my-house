@@ -1,8 +1,13 @@
 package learn.dontwreckmyhouse.ui;
 
+import learn.dontwreckmyhouse.models.Guest;
+import learn.dontwreckmyhouse.models.Host;
 import learn.dontwreckmyhouse.models.Reservation;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
@@ -32,6 +37,42 @@ public class View {
         reservations.stream()
                 .sorted(Comparator.comparing(Reservation::getStartDate))
                 .forEach(System.out::println);
+    }
+
+    public String displayReservation(Guest guest) {
+        return guest.getEmail();
+    }
+
+    public Reservation editReservation(Reservation reservation, Host host, Guest guest) {
+        Reservation result = new Reservation();
+
+        DateTimeFormatter df = new DateTimeFormatterBuilder().parseCaseInsensitive()
+                .append(DateTimeFormatter.ofPattern("MM/dd/yyyy")).toFormatter();
+
+        LocalDate start = null;
+        LocalDate end = null;
+        LocalDate startDate = LocalDate.parse(userStartDate(), df);
+
+        if(startDate == null) {
+            start = reservation.getStartDate();
+        } else {
+            start = startDate;
+        }
+
+        LocalDate endDate = LocalDate.parse(userEndDate(), df);
+        if(endDate == null) {
+            end = reservation.getEndDate();
+        } else {
+            end = endDate;
+        }
+
+        result.setId(reservation.getId());
+        result.setHost(host);
+        result.setStartDate(start);
+        result.setEndDate(end);
+        result.setGuest(guest);
+
+        return result;
     }
 
     // Helper methods

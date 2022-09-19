@@ -79,7 +79,7 @@ public class Controller {
     private void makeReservation() throws DataException {
         view.displayHeader(MenuOption.MAKE_RESERVATION.getTitle());
         String guestEmail = view.guestEmailPrompt();
-        guestService.findByEmail(guestEmail);
+        Guest guest = guestService.findByEmail(guestEmail);
         String hostEmail = view.hostEmailPrompt();
         Host host = hostService.findByEmail(hostEmail);
         if(host == null) {
@@ -88,47 +88,47 @@ public class Controller {
             List<Reservation> reservations = reservationService.findByHost(host);
             view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
             view.displayReservations(reservations);
-        }
+            DateTimeFormatter df = new DateTimeFormatterBuilder().parseCaseInsensitive()
+                    .append(DateTimeFormatter.ofPattern("MM/dd/yyyy")).toFormatter();
+            // prompt user for start date
+            String userStartDate = view.userStartDate();
+            LocalDate date1 = LocalDate.parse(userStartDate, df);
+            // prompt user for end date
+            String userEndDate = view.userEndDate();
+            LocalDate date2 = LocalDate.parse(userEndDate, df);
+            Reservation reservation = new Reservation();
+            reservation.setHost(host);
+            reservation.setGuest(guest);
+            reservation.setStartDate(date1);
+            reservation.setEndDate(date2);
+            reservation.setTotal(reservationService.calculateTotal(reservation));
 
-        DateTimeFormatter df = new DateTimeFormatterBuilder().parseCaseInsensitive()
-                .append(DateTimeFormatter.ofPattern("MM/dd/yyyy")).toFormatter();
-        // prompt user for start date
-        String userStartDate = view.userStartDate();
-        LocalDate date1 = LocalDate.parse(userStartDate, df);
-        // prompt user for end date
-        String userEndDate = view.userEndDate();
-        LocalDate date2 = LocalDate.parse(userEndDate, df);
-        Reservation reservation = new Reservation();
+            reservationService.validate(reservation);
+            // show summary(header) with dates, total
+            view.displayHeader("Summary");
+            view.displayText(String.format("Start (MM/dd/yyyy): %s ", date1));
+            view.displayText(String.format("End (MM/dd/yyyy): %s ", date2));
+            view.displayText(String.format("Total: %s", reservation.getCalculateTotal()));
+            // Ask user Is this okay? [y/n]:
+            view.userPrompt();
 
-        reservationService.validate(reservation);
-        // show summary(header) with dates, total
-        view.displayHeader("Summary");
-        view.displayText(String.format("Start (MM/dd/yyyy): %s, ", date1));
-        view.displayText(String.format("End (MM/dd/yyyy): %s, ", date2));
-        view.displayText(String.format("Total: %s", reservation.getCalculateTotal()));
-        // Ask user Is this okay? [y/n]:
-        view.userPrompt();
-        // Display message as a header, ie: Success/Error
-
-        Result result = reservationService.add(reservation);
-        if (!result.isSuccess()) {
-            view.displayResult(false, result.getMessages());
-        } else {
-            String successMessage = String.format("Reservation %s created.", result.getPayload());
-            view.displayResult(true, successMessage);
+            // Display message as a header, ie: Success/Error
+            Result result = reservationService.add(reservation);
+            if (!result.isSuccess()) {
+                view.displayResult(false, result.getMessages());
+            } else {
+                String successMessage = String.format("Reservation %s created.", result.getPayload());
+                view.displayResult(true, successMessage);
+            }
         }
     }
 
     private void editReservation() throws DataException {
         view.displayHeader(MenuOption.EDIT_RESERVATION.getTitle());
-        // find a reservation
-        // start and end date can be edited
-        // recalculate the total & display a summary
-        // ask user to confirm
         String hostEmail = view.hostEmailPrompt();
         Host host = hostService.findByEmail(hostEmail);
         if(host == null) {
-            return;
+            view.displayResult(false, "Please choose a valid host.");
         } else {
             String guestEmail = view.guestEmailPrompt();
             Guest guest = guestService.findByEmail(guestEmail);
@@ -139,14 +139,47 @@ public class Controller {
             view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
             view.displayReservations(reservations);
 
-//            Reservation updateReservation = reservationService.findByHost()
+            Reservation updateReservation = reservationService.findById(guest.getId(), host);
+            Reservation newReservation = view.editReservation(updateReservation, host, guest);
+            reservationService.calculateTotal(newReservation);
+            view.userPrompt();
+
+            Result <Reservation> result = reservationService.updateReservation(newReservation);
+            if (!result.isSuccess()) {
+                view.displayResult(false, result.getMessages());
+            } else {
+                String successMessage = String.format("Reservation %s updated.", result.getPayload().getId());
+                view.displayResult(true, successMessage);
+            }
         }
     }
 
     private void cancelReservation() throws DataException {
         view.displayHeader(MenuOption.CANCEL_RESERVATION.getTitle());
-        // find a reservation
-        // display a message
-    }
+        String guestEmail = view.guestEmailPrompt();
+        Guest guest = guestService.findByEmail(guestEmail);
+        String hostEmail = view.hostEmailPrompt();
+        Host host = hostService.findByEmail(hostEmail);
 
+        if(guest == null) {
+            view.displayResult(false, "Please enter a guest email address..");
+        }
+        if(host == null) {
+            view.displayResult(false, "Please choose a valid host.");
+        }
+        assert guest != null;
+
+        Reservation reservation = reservationService.findById(guest.getId(), host);
+
+        view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
+        view.displayReservation(reservation.getGuest());
+
+        Result <Reservation> result = reservationService.deleteReservation(reservation);
+        if (!result.isSuccess()) {
+            view.displayResult(false, result.getMessages());
+        } else {
+            String successMessage = String.format("Reservation %s deleted.", result.getPayload().getId());
+            view.displayResult(true, successMessage);
+        }
+    }
 }

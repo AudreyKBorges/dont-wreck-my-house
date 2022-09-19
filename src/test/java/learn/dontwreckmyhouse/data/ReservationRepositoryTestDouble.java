@@ -32,6 +32,11 @@ public class ReservationRepositoryTestDouble implements ReservationRepository {
     }
 
     @Override
+    public Reservation findById(int id, Host host) {
+        return null;
+    }
+
+    @Override
     public Reservation add(Reservation reservation) {
         return reservation;
     }

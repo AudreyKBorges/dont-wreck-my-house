@@ -89,6 +89,10 @@ public class ReservationService {
         return result;
     }
 
+    public Reservation findById(int reservationId, Host host) {
+        return reservationRepository.findById(reservationId, host);
+    }
+
     // UPDATE
     public Result<Reservation> updateReservation(Reservation entry) throws DataException {
         Result<Reservation> result = validate(entry);

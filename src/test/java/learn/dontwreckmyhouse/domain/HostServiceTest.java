@@ -4,7 +4,6 @@ import learn.dontwreckmyhouse.data.DataException;
 import learn.dontwreckmyhouse.data.GuestRepositoryTestDouble;
 import learn.dontwreckmyhouse.data.HostRepositoryTestDouble;
 import learn.dontwreckmyhouse.data.ReservationRepositoryTestDouble;
-import learn.dontwreckmyhouse.models.Guest;
 import learn.dontwreckmyhouse.models.Host;
 import org.junit.jupiter.api.Test;
 

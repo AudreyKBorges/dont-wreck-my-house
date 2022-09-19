@@ -5,11 +5,7 @@ import learn.dontwreckmyhouse.data.GuestRepositoryTestDouble;
 import learn.dontwreckmyhouse.data.HostRepositoryTestDouble;
 import learn.dontwreckmyhouse.data.ReservationRepositoryTestDouble;
 import learn.dontwreckmyhouse.models.Guest;
-import learn.dontwreckmyhouse.models.Host;
 import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
-import java.util.function.BooleanSupplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
