@@ -170,19 +170,17 @@ public class Controller {
         Host host = hostService.findByEmail(hostEmail);
 
         if(guest == null) {
-            view.displayResult(false, "Please enter a guest email address..");
+            view.displayResult(false, "Please enter a guest email address.");
         }
         if(host == null) {
             view.displayResult(false, "Please choose a valid host.");
         }
 
-        String id = view.reservationIDPrompt();
-        Reservation reservation = reservationService.findById(Integer.parseInt(id), host);
-
         view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
-        view.displayReservation(reservation.getGuest());
 
         List<Reservation> existingReservations = reservationService.findByHost(host);
+        Reservation reservation = reservationService.findById(1, host);
+
         Result <Reservation> result = reservationService.deleteReservation(reservation, existingReservations);
         if (!result.isSuccess()) {
             view.displayResult(false, result.getMessages());

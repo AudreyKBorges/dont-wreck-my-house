@@ -39,8 +39,16 @@ public class View {
                 .forEach(System.out::println);
     }
 
-    public String displayReservation(Guest guest) {
-        return guest.getEmail();
+    public void displayReservation(Reservation reservation) {
+        if(reservation == null) {
+            displayText("Host does not exist");
+        }
+        System.out.println(reservation);
+    }
+
+    public int updateById(){
+        int id = readInt("Reservation ID: ",1, 9999999);
+        return id;
     }
 
     public Reservation editReservation(Reservation reservation, Host host, Guest guest) {
@@ -99,10 +107,6 @@ public class View {
 
     public String userPrompt() {
         return readRequiredString("Is this okay? [y/n]: ");
-    }
-
-    public String reservationIDPrompt() {
-        return readRequiredString("ID: ");
     }
 
     public void displayResult(boolean success, String message) {
