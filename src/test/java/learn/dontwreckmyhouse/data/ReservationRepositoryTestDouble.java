@@ -32,8 +32,14 @@ public class ReservationRepositoryTestDouble implements ReservationRepository {
     }
 
     @Override
-    public Reservation findById(int id, Host host) {
+    public Reservation findById(int id, Host host) { {
+        for(Reservation reservation : findByHost(host)){
+            if(reservation.getId() == id){
+                return reservation;
+            }
+        }
         return null;
+    }
     }
 
     @Override

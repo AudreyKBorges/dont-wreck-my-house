@@ -80,14 +80,18 @@ public class Controller {
         view.displayHeader(MenuOption.MAKE_RESERVATION.getTitle());
         String guestEmail = view.guestEmailPrompt();
         Guest guest = guestService.findByEmail(guestEmail);
+        if(guest == null) {
+            view.displayResult(false, "Guest cannot be null.");
+            return;
+        }
         String hostEmail = view.hostEmailPrompt();
         Host host = hostService.findByEmail(hostEmail);
         if(host == null) {
             view.displayResult(false, "Please choose a valid host.");
         } else {
-            List<Reservation> reservations = reservationService.findByHost(host);
+            List<Reservation> existingReservations = reservationService.findByHost(host);
             view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
-            view.displayReservations(reservations);
+            view.displayReservations(existingReservations);
             DateTimeFormatter df = new DateTimeFormatterBuilder().parseCaseInsensitive()
                     .append(DateTimeFormatter.ofPattern("MM/dd/yyyy")).toFormatter();
             // prompt user for start date
@@ -96,24 +100,26 @@ public class Controller {
             // prompt user for end date
             String userEndDate = view.userEndDate();
             LocalDate date2 = LocalDate.parse(userEndDate, df);
-            Reservation reservation = new Reservation();
-            reservation.setHost(host);
-            reservation.setGuest(guest);
-            reservation.setStartDate(date1);
-            reservation.setEndDate(date2);
-            reservation.setTotal(reservationService.calculateTotal(reservation));
+            Reservation newReservation = new Reservation();
+            newReservation.setHost(host);
+            newReservation.setGuest(guest);
+            newReservation.setStartDate(date1);
+            newReservation.setEndDate(date2);
+            newReservation.setTotal(reservationService.calculateTotal(newReservation));
 
-            reservationService.validate(reservation, existingReservations, result);
+            Result result = new Result();
+
+            reservationService.validate(newReservation, result);
             // show summary(header) with dates, total
             view.displayHeader("Summary");
             view.displayText(String.format("Start (MM/dd/yyyy): %s ", date1));
             view.displayText(String.format("End (MM/dd/yyyy): %s ", date2));
-            view.displayText(String.format("Total: %s", reservation.getCalculateTotal()));
+            view.displayText(String.format("Total: %s", newReservation.getCalculateTotal()));
             // Ask user Is this okay? [y/n]:
             view.userPrompt();
 
             // Display message as a header, ie: Success/Error
-            Result result = reservationService.add(reservation);
+            result = reservationService.add(newReservation);
             if (!result.isSuccess()) {
                 view.displayResult(false, result.getMessages());
             } else {
@@ -137,16 +143,16 @@ public class Controller {
                 view.displayResult(false, "Guest cannot be null.");
                 return;
             }
-            List<Reservation> reservations = reservationService.findByHost(host);
+            List<Reservation> existingReservations = reservationService.findByHost(host);
             view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
-            view.displayReservations(reservations);
+            view.displayReservations(existingReservations);
 
             Reservation updateReservation = reservationService.findById(guest.getId(), host);
             Reservation newReservation = view.editReservation(updateReservation, host, guest);
             reservationService.calculateTotal(newReservation);
             view.userPrompt();
 
-            Result <Reservation> result = reservationService.updateReservation(newReservation);
+            Result <Reservation> result = reservationService.updateReservation(newReservation, existingReservations);
             if (!result.isSuccess()) {
                 view.displayResult(false, result.getMessages());
             } else {
@@ -170,13 +176,14 @@ public class Controller {
             view.displayResult(false, "Please choose a valid host.");
         }
 
-        Reservation reservation = view.
-//                reservationService.findById(guest.getId(), host);
+        String id = view.reservationIDPrompt();
+        Reservation reservation = reservationService.findById(Integer.parseInt(id), host);
 
         view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
         view.displayReservation(reservation.getGuest());
 
-        Result <Reservation> result = reservationService.deleteReservation(reservation);
+        List<Reservation> existingReservations = reservationService.findByHost(host);
+        Result <Reservation> result = reservationService.deleteReservation(reservation, existingReservations);
         if (!result.isSuccess()) {
             view.displayResult(false, result.getMessages());
         } else {

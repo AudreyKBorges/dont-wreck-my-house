@@ -47,14 +47,15 @@ class ReservationServiceTest {
         Reservation toUpdate = all.get(0);
         toUpdate.setEndDate(LocalDate.of(2022,11,30));
 
-        Result<Reservation> result = service.updateReservation(toUpdate);
+        Result<Reservation> result = service.updateReservation(toUpdate, all);
 
         assertTrue(result.isSuccess());
     }
 
     @Test
     void shouldDeleteReservation() throws DataException {
-        Result result = service.deleteReservation(ReservationRepositoryTestDouble.RESERVATION);
+        List<Reservation> all = service.findByHost(HostRepositoryTestDouble.HOST);
+        Result result = service.deleteReservation(ReservationRepositoryTestDouble.RESERVATION, all);
         assertTrue(result.isSuccess());
     }
 
@@ -63,8 +64,8 @@ class ReservationServiceTest {
         Reservation reservation = new Reservation();
         reservation.setId(0);
         reservation.setHost(HostRepositoryTestDouble.HOST);
-        reservation.setStartDate(LocalDate.of(2022,10,10));
-        reservation.setEndDate(LocalDate.of(2022,10,12));
+        reservation.setStartDate(LocalDate.of(2022,10,31));
+        reservation.setEndDate(LocalDate.of(2022,11,12));
         Guest guest = new Guest();
         guest.setId(1);
         reservation.setGuest(guest);
@@ -125,11 +126,7 @@ class ReservationServiceTest {
         assertFalse(result.isSuccess());
         assertNull(result.getPayload());
     }
-    @Test
-    void shouldCalculateTotal() {
 
-
-    }
     @Test
     void shouldNotUpdateNonExisting() throws DataException {
         Reservation reservation = new Reservation();
@@ -142,7 +139,9 @@ class ReservationServiceTest {
         reservation.setGuest(guest);
         reservation.setTotal(BigDecimal.valueOf(300));
 
-        Result result = service.updateReservation(reservation);
+        List<Reservation> existingReservations = service.findByHost(reservation.getHost());
+
+        Result result = service.updateReservation(reservation, existingReservations);
         assertFalse(result.isSuccess());
     }
     @Test
@@ -150,7 +149,7 @@ class ReservationServiceTest {
         Reservation reservation = new Reservation();
         reservation.setId(0);
         reservation.setHost(HostRepositoryTestDouble.HOST);
-        reservation.setStartDate(LocalDate.of(2021,8,31));
+        reservation.setStartDate(LocalDate.of(2022,8,31));
         reservation.setEndDate(LocalDate.now());
         Guest guest = new Guest();
         guest.setId(1);
@@ -173,7 +172,9 @@ class ReservationServiceTest {
         reservation.setGuest(guest);
         reservation.setTotal(BigDecimal.valueOf(300));
 
-        Result result = service.deleteReservation(reservation);
+        List<Reservation> existingReservations = service.findByHost(reservation.getHost());
+
+        Result result = service.deleteReservation(reservation, existingReservations);
         assertFalse(result.isSuccess());
     }
 

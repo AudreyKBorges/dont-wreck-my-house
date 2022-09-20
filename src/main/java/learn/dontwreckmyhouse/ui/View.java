@@ -101,6 +101,10 @@ public class View {
         return readRequiredString("Is this okay? [y/n]: ");
     }
 
+    public String reservationIDPrompt() {
+        return readRequiredString("ID: ");
+    }
+
     public void displayResult(boolean success, String message) {
         displayResult(success, List.of(message));
     }
