@@ -103,7 +103,7 @@ public class Controller {
             reservation.setEndDate(date2);
             reservation.setTotal(reservationService.calculateTotal(reservation));
 
-            reservationService.validate(reservation);
+            reservationService.validate(reservation, existingReservations, result);
             // show summary(header) with dates, total
             view.displayHeader("Summary");
             view.displayText(String.format("Start (MM/dd/yyyy): %s ", date1));
@@ -129,10 +129,12 @@ public class Controller {
         Host host = hostService.findByEmail(hostEmail);
         if(host == null) {
             view.displayResult(false, "Please choose a valid host.");
+            return;
         } else {
             String guestEmail = view.guestEmailPrompt();
             Guest guest = guestService.findByEmail(guestEmail);
             if(guest == null) {
+                view.displayResult(false, "Guest cannot be null.");
                 return;
             }
             List<Reservation> reservations = reservationService.findByHost(host);
@@ -167,9 +169,9 @@ public class Controller {
         if(host == null) {
             view.displayResult(false, "Please choose a valid host.");
         }
-        assert guest != null;
 
-        Reservation reservation = reservationService.findById(guest.getId(), host);
+        Reservation reservation = view.
+//                reservationService.findById(guest.getId(), host);
 
         view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
         view.displayReservation(reservation.getGuest());

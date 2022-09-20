@@ -107,7 +107,7 @@ class ReservationServiceTest {
 
         assertFalse(actual.isSuccess());
         assertEquals(1, actual.getMessages().size());
-        assertEquals("Host email cannot be blank.", actual.getMessages().get(0));
+        assertEquals("Host email cannot be null.", actual.getMessages().get(0));
     }
     @Test
     void shouldValidateDuplicateDates() throws DataException {

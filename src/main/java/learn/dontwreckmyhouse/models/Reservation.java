@@ -10,8 +10,6 @@ public class Reservation {
     private LocalDate endDate;
     private Guest guest;
     private Host host;
-
-    private BigDecimal calculateTotal;
     private BigDecimal total;
 
     public Reservation(int id, LocalDate startDate, LocalDate endDate, Guest guest, Host host, BigDecimal calculateTotal, BigDecimal total) {
@@ -20,7 +18,6 @@ public class Reservation {
         this.endDate = endDate;
         this.guest = guest;
         this.host = host;
-        this.calculateTotal = calculateTotal;
         this.total = total;
     }
 
@@ -30,9 +27,6 @@ public class Reservation {
 
     }
 
-    public void setCalculateTotal(BigDecimal calculateTotal) {
-        this.calculateTotal = calculateTotal;
-    }
     public BigDecimal getCalculateTotal() {
         return total;
     }
