@@ -36,7 +36,11 @@ public class ReservationService {
                 day == DayOfWeek.WEDNESDAY || day == DayOfWeek.THURSDAY || day == DayOfWeek.FRIDAY;
     }
     public BigDecimal calculateTotal(Reservation reservation) {
+<<<<<<< HEAD
         LocalDate day = reservation.getStartDate();
+=======
+LocalDate day = reservation.getStartDate();
+>>>>>>> a5d28132e8ed0bf1904ec098140dc8679aa7c3b5
         BigDecimal totalCost = BigDecimal.ZERO;
         do{
             // is today a weekend or standard day?
@@ -45,9 +49,14 @@ public class ReservationService {
                     totalCost.add(reservation.getHost().getStandardRate());
             day = day.plusDays(1);
         }while(day.isBefore(reservation.getEndDate()));
+<<<<<<< HEAD
         reservation.setTotal(totalCost);
 
         return totalCost;
+=======
+
+        reservation.setTotal(totalCost);
+>>>>>>> a5d28132e8ed0bf1904ec098140dc8679aa7c3b5
     }
 
     public Result add(Reservation newReservation, List<Reservation> existingReservations) throws DataException {
