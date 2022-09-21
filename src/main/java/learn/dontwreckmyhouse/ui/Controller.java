@@ -11,8 +11,6 @@ import learn.dontwreckmyhouse.models.Reservation;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
 import java.util.List;
 
 @Component
@@ -92,19 +90,16 @@ public class Controller {
             List<Reservation> existingReservations = reservationService.findByHost(host);
             view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
             view.displayReservations(existingReservations);
-            DateTimeFormatter df = new DateTimeFormatterBuilder().parseCaseInsensitive()
-                    .append(DateTimeFormatter.ofPattern("MM/dd/yyyy")).toFormatter();
+
             // prompt user for start date
-            String userStartDate = view.userStartDate();
-            LocalDate date1 = LocalDate.parse(userStartDate, df);
+            LocalDate userStartDate = view.userStartDate();
             // prompt user for end date
-            String userEndDate = view.userEndDate();
-            LocalDate date2 = LocalDate.parse(userEndDate, df);
+            LocalDate userEndDate = view.userEndDate();
             Reservation newReservation = new Reservation();
             newReservation.setHost(host);
             newReservation.setGuest(guest);
-            newReservation.setStartDate(date1);
-            newReservation.setEndDate(date2);
+            newReservation.setStartDate(userStartDate);
+            newReservation.setEndDate(userEndDate);
             newReservation.setTotal(reservationService.calculateTotal(newReservation));
 
             Result result = new Result();
@@ -112,8 +107,8 @@ public class Controller {
             reservationService.validate(newReservation, result);
             // show summary(header) with dates, total
             view.displayHeader("Summary");
-            view.displayText(String.format("Start (MM/dd/yyyy): %s ", date1));
-            view.displayText(String.format("End (MM/dd/yyyy): %s ", date2));
+            view.displayText(String.format("Start (MM/dd/yyyy): %s ", userStartDate));
+            view.displayText(String.format("End (MM/dd/yyyy): %s ", userEndDate));
             view.displayText(String.format("Total: %s", newReservation.getCalculateTotal()));
             // Ask user Is this okay? [y/n]:
             view.userPrompt();
@@ -146,9 +141,11 @@ public class Controller {
             view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
             view.displayReservations(existingReservations);
 
-            Reservation updateReservation = reservationService.findById(guest.getId(), host);
+            String id = String.valueOf(view.promptForId());
+            Reservation updateReservation = reservationService.findById(Integer.parseInt(id), host);
+
             Reservation newReservation = view.editReservation(updateReservation, host, guest);
-            reservationService.calculateTotal(newReservation);
+            view.displayText(String.format("Total: %s", updateReservation.getCalculateTotal()));
             view.userPrompt();
 
             Result <Reservation> result = reservationService.updateReservation(newReservation, existingReservations);
@@ -186,7 +183,7 @@ public class Controller {
             if (!result.isSuccess()) {
                 view.displayResult(false, result.getMessages());
             } else {
-                String successMessage = String.format("Reservation %s deleted.", result.getPayload().getId());
+                String successMessage = String.format("Reservation %s deleted.", reservation.getId());
                 view.displayResult(true, successMessage);
             }
         }

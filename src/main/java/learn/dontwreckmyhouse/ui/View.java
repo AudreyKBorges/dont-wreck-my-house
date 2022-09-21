@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
+import java.time.format.DateTimeParseException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
@@ -52,7 +53,7 @@ public class View {
 
         LocalDate start = null;
         LocalDate end = null;
-        LocalDate startDate = LocalDate.parse(userStartDate(), df);
+        LocalDate startDate = readOptionalDate("Enter new start date (MM/dd/yyyy) or press enter to keep original: ");
 
         if(startDate == null) {
             start = reservation.getStartDate();
@@ -60,7 +61,7 @@ public class View {
             start = startDate;
         }
 
-        LocalDate endDate = LocalDate.parse(userEndDate(), df);
+        LocalDate endDate = readOptionalDate("Enter new end date (MM/dd/yyyy) or press enter to keep original: ");
         if(endDate == null) {
             end = reservation.getEndDate();
         } else {
@@ -90,12 +91,12 @@ public class View {
         return readRequiredString("Guest email: ");
     }
 
-    public String userStartDate() {
-        return readRequiredString("Start (MM/DD/YYYY): ");
+    public LocalDate userStartDate() {
+        return readDate("Start (MM/DD/YYYY): ");
     }
 
-    public String userEndDate() {
-        return readRequiredString("End (MM/DD/YYYY): ");
+    public LocalDate userEndDate() {
+        return readDate("End (MM/DD/YYYY): ");
     }
 
     public String userPrompt() {
@@ -116,6 +117,47 @@ public class View {
     public void displayText(String line){
         System.out.println(line);
     }
+
+    private LocalDate readOptionalDate(String prompt) {
+        LocalDate result = null;
+        boolean isValid = false;
+
+        do {
+            String value = readString(prompt).trim();
+            if(value.isBlank() || value.isEmpty()) {
+                return null;
+            }
+            try {
+                DateTimeFormatter df = new DateTimeFormatterBuilder().parseCaseInsensitive()
+                        .append(DateTimeFormatter.ofPattern("MM/dd/yyyy")).toFormatter();
+                result = LocalDate.parse(value, df);
+                isValid = true;
+            }catch (DateTimeParseException ex) {
+                System.out.println("Value must entered in the following format MM/dd/yyyy");
+            }
+        } while(!isValid);
+        return result;
+    }
+
+    private LocalDate readDate(String prompt) {
+        displayText(prompt);
+        LocalDate result = null;
+        boolean isValid = false;
+
+        do {
+            String value = readRequiredString(prompt);
+            try {
+                DateTimeFormatter df = new DateTimeFormatterBuilder().parseCaseInsensitive()
+                        .append(DateTimeFormatter.ofPattern("MM/dd/yyyy")).toFormatter();
+                result = LocalDate.parse(value, df);
+                isValid = true;
+            }catch (DateTimeParseException ex) {
+                System.out.println("Value must entered in the following format MM/dd/yyyy");
+            }
+        } while(!isValid);
+        return result;
+    }
+
 
     private int readInt(String prompt){
         int result = 0;

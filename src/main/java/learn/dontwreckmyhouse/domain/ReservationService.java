@@ -103,20 +103,18 @@ public class ReservationService {
 
     // DELETE
     public Result<Reservation> deleteReservation(Reservation reservation, List<Reservation> existingReservations) throws DataException {
-        Result result = validateDuplicateDates(reservation);
+        Result result = new Result();
+
+            if(reservation.getStartDate().isBefore(LocalDate.now())) {
+                result.addMessage("Cannot cancel a reservation that is in the past");
+                return result;
+            }
+
         if(!reservationRepository.deleteReservation(reservation)){
             result.addMessage(String.format("Reservation entry with id %s does not exist.", reservation.getId()));
             return result;
         }
 
-        existingReservations = findByHost(reservation.getHost());
-        result = new Result();
-        for(Reservation r : existingReservations) {
-            if(r.getStartDate().isBefore(LocalDate.now())) {
-                result.addMessage("Cannot cancel a reservation that is in the past");
-                return result;
-            }
-        }
         return result;
     }
 
@@ -150,6 +148,9 @@ public class ReservationService {
         List<Reservation> existingReservations = findByHost(newReservation.getHost());
         Result result = new Result();
         for(Reservation reservation : existingReservations) {
+            if(newReservation.getId() == reservation.getId()) {
+                continue;
+            }
             if(newReservation.getStartDate().equals(reservation.getStartDate()) && newReservation.getEndDate().equals(reservation.getEndDate())) {
                 result.addMessage("Reservation cannot overlap existing reservation dates");
                 return result;
