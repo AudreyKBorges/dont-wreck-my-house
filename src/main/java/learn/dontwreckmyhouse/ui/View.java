@@ -39,14 +39,7 @@ public class View {
                 .forEach(System.out::println);
     }
 
-    public void displayReservation(Reservation reservation) {
-        if(reservation == null) {
-            displayText("Host does not exist");
-        }
-        System.out.println(reservation);
-    }
-
-    public int updateById(){
+    public int promptForId(){
         int id = readInt("Reservation ID: ",1, 9999999);
         return id;
     }

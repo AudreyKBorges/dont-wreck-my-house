@@ -131,18 +131,17 @@ public class Controller {
 
     private void editReservation() throws DataException {
         view.displayHeader(MenuOption.EDIT_RESERVATION.getTitle());
+        String guestEmail = view.guestEmailPrompt();
+        Guest guest = guestService.findByEmail(guestEmail);
+        if(guest == null) {
+            view.displayResult(false, "Guest cannot be null.");
+            return;
+        }
         String hostEmail = view.hostEmailPrompt();
         Host host = hostService.findByEmail(hostEmail);
         if(host == null) {
             view.displayResult(false, "Please choose a valid host.");
-            return;
         } else {
-            String guestEmail = view.guestEmailPrompt();
-            Guest guest = guestService.findByEmail(guestEmail);
-            if(guest == null) {
-                view.displayResult(false, "Guest cannot be null.");
-                return;
-            }
             List<Reservation> existingReservations = reservationService.findByHost(host);
             view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
             view.displayReservations(existingReservations);
@@ -166,27 +165,30 @@ public class Controller {
         view.displayHeader(MenuOption.CANCEL_RESERVATION.getTitle());
         String guestEmail = view.guestEmailPrompt();
         Guest guest = guestService.findByEmail(guestEmail);
+        if(guest == null) {
+            view.displayResult(false, "Guest cannot be null.");
+            return;
+        }
         String hostEmail = view.hostEmailPrompt();
         Host host = hostService.findByEmail(hostEmail);
-
-        if(guest == null) {
-            view.displayResult(false, "Please enter a guest email address.");
-        }
         if(host == null) {
             view.displayResult(false, "Please choose a valid host.");
-        }
-
-        view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
-
-        List<Reservation> existingReservations = reservationService.findByHost(host);
-        Reservation reservation = reservationService.findById(1, host);
-
-        Result <Reservation> result = reservationService.deleteReservation(reservation, existingReservations);
-        if (!result.isSuccess()) {
-            view.displayResult(false, result.getMessages());
         } else {
-            String successMessage = String.format("Reservation %s deleted.", result.getPayload().getId());
-            view.displayResult(true, successMessage);
+
+            List<Reservation> existingReservations = reservationService.findByHost(host);
+            view.displayHeader(String.format("%s: %s, %s", host.getLastName(), host.getCity(), host.getState()));
+            view.displayReservations(existingReservations);
+
+            String id = String.valueOf(view.promptForId());
+            Reservation reservation = reservationService.findById(Integer.parseInt(id), host);
+
+            Result<Reservation> result = reservationService.deleteReservation(reservation, existingReservations);
+            if (!result.isSuccess()) {
+                view.displayResult(false, result.getMessages());
+            } else {
+                String successMessage = String.format("Reservation %s deleted.", result.getPayload().getId());
+                view.displayResult(true, successMessage);
+            }
         }
     }
 }
