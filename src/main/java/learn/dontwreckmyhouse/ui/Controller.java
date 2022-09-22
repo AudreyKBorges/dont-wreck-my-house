@@ -100,21 +100,21 @@ public class Controller {
             newReservation.setGuest(guest);
             newReservation.setStartDate(userStartDate);
             newReservation.setEndDate(userEndDate);
-            newReservation.setTotal(reservationService.calculateTotal(newReservation));
 
-            Result result = new Result();
-
-            reservationService.validate(newReservation, result);
             // show summary(header) with dates, total
             view.displayHeader("Summary");
             view.displayText(String.format("Start (MM/dd/yyyy): %s ", userStartDate));
             view.displayText(String.format("End (MM/dd/yyyy): %s ", userEndDate));
-            view.displayText(String.format("Total: %s", newReservation.getCalculateTotal()));
+            view.displayText(String.format("Total: %s", reservationService.calculateTotal(newReservation)));
             // Ask user Is this okay? [y/n]:
-            view.userPrompt();
+            boolean confirm = view.userPrompt();
+            if(confirm == false) {
+                view.displayText("Reservation not created.");
+                return;
+            }
 
             // Display message as a header, ie: Success/Error
-            result = reservationService.add(newReservation);
+            Result result = reservationService.add(newReservation);
             if (!result.isSuccess()) {
                 view.displayResult(false, result.getMessages());
             } else {
@@ -145,7 +145,11 @@ public class Controller {
             Reservation updateReservation = reservationService.findById(Integer.parseInt(id), host);
 
             Reservation newReservation = view.editReservation(updateReservation, host, guest);
-            view.userPrompt();
+            boolean confirm = view.userPrompt();
+            if(confirm == false) {
+                view.displayText("Changes not saved.");
+                return;
+            }
 
             Result <Reservation> result = reservationService.updateReservation(newReservation, existingReservations);
             if (!result.isSuccess()) {

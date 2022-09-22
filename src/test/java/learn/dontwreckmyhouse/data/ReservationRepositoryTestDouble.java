@@ -12,7 +12,7 @@ import java.util.List;
 public class ReservationRepositoryTestDouble implements ReservationRepository {
 
     public final static Reservation RESERVATION = new Reservation(1,LocalDate.of(2022,10,11),
-            LocalDate.of(2022,10,13), new Guest(), new Host(), BigDecimal.valueOf(663), BigDecimal.valueOf(663));
+            LocalDate.of(2022,10,12), new Guest(), HostRepositoryTestDouble.HOST, BigDecimal.valueOf(340), BigDecimal.valueOf(425));
 
     @Override
     public List<Reservation> findByHost(Host host) {

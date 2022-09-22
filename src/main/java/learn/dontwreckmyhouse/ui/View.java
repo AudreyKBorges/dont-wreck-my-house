@@ -100,8 +100,13 @@ public class View {
         return readDate("End (MM/DD/YYYY): ");
     }
 
-    public String userPrompt() {
-        return readRequiredString("Is this okay? [y/n]: ");
+    public boolean userPrompt() {
+        String userChoice = readRequiredString("Is this okay? [y/n]: ");
+        if(userChoice.equalsIgnoreCase("y")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void displayResult(boolean success, String message) {
@@ -141,7 +146,6 @@ public class View {
     }
 
     private LocalDate readDate(String prompt) {
-        displayText(prompt);
         LocalDate result = null;
         boolean isValid = false;
 

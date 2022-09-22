@@ -82,7 +82,6 @@ class ReservationFileRepositoryTest {
 
         assertTrue(result);
 
-//        assertEquals("1", reservation.getId());
         assertEquals(LocalDate.of(2022,12,15), reservation.getStartDate());
         assertEquals(LocalDate.of(2022,12,18), reservation.getEndDate());
         assertEquals(50, reservation.getGuest().getId());

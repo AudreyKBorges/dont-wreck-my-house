@@ -62,14 +62,14 @@ class ReservationServiceTest {
     @Test
     void shouldNotMakeReservationWithOverlappingDates() throws DataException {
         Reservation reservation = new Reservation();
-        reservation.setId(0);
+        reservation.setId(1);
         reservation.setHost(HostRepositoryTestDouble.HOST);
-        reservation.setStartDate(LocalDate.of(2022,10,31));
-        reservation.setEndDate(LocalDate.of(2022,11,12));
+        reservation.setStartDate(LocalDate.of(2022,10,11));
+        reservation.setEndDate(LocalDate.of(2022,11,6));
         Guest guest = new Guest();
         guest.setId(1);
         reservation.setGuest(guest);
-        reservation.setTotal(BigDecimal.valueOf(300));
+        reservation.setTotal(BigDecimal.valueOf(340));
 
         Result<Reservation> result = service.add(reservation);
         assertFalse(result.isSuccess());
@@ -79,16 +79,16 @@ class ReservationServiceTest {
     @Test
     void shouldNotAddReservationWithNullHostEmail() throws DataException {
         Reservation reservation = new Reservation();
-        Result actual = service.add(reservation);
-        reservation.setId(0);
+        reservation.setId(1);
         reservation.setHost(host2);
-        reservation.setStartDate(LocalDate.of(2022,10,10));
-        reservation.setEndDate(LocalDate.of(2022,10,12));
+        reservation.setStartDate(LocalDate.of(2023,11,30));
+        reservation.setEndDate(LocalDate.of(2023,12,1));
         Guest guest = new Guest();
         guest.setId(1);
         reservation.setGuest(guest);
-        reservation.setTotal(BigDecimal.valueOf(300));
+        reservation.setTotal(BigDecimal.valueOf(340));
 
+        Result actual = service.add(reservation);
         assertFalse(actual.isSuccess());
         assertEquals(1, actual.getMessages().size());
         assertEquals("Host email cannot be null.", actual.getMessages().get(0));
@@ -96,24 +96,25 @@ class ReservationServiceTest {
     @Test
     void shouldNotFindByBlankHostEmail() throws DataException {
         Reservation reservation = new Reservation();
-        Result actual = service.add(reservation);
+
         reservation.setId(0);
         reservation.setHost(host);
-        reservation.setStartDate(LocalDate.of(2022,10,10));
-        reservation.setEndDate(LocalDate.of(2022,10,12));
+        reservation.setStartDate(LocalDate.of(2022,10,31));
+        reservation.setEndDate(LocalDate.of(2022,11,5));
         Guest guest = new Guest();
         guest.setId(1);
         reservation.setGuest(guest);
         reservation.setTotal(BigDecimal.valueOf(300));
 
+        Result actual = service.add(reservation);
         assertFalse(actual.isSuccess());
         assertEquals(1, actual.getMessages().size());
-        assertEquals("Host email cannot be null.", actual.getMessages().get(0));
+        assertEquals("Host email cannot be blank.", actual.getMessages().get(0));
     }
     @Test
     void shouldValidateDuplicateDates() throws DataException {
         Reservation reservation = new Reservation();
-        reservation.setId(0);
+        reservation.setId(1);
         reservation.setHost(HostRepositoryTestDouble.HOST);
         reservation.setStartDate(LocalDate.of(2022,10,31));
         reservation.setEndDate(LocalDate.of(2022,11,5));
@@ -147,14 +148,14 @@ class ReservationServiceTest {
     @Test
     void shouldNotAddWithStartDateBeforePresentDay() throws DataException {
         Reservation reservation = new Reservation();
-        reservation.setId(0);
+        reservation.setId(1);
         reservation.setHost(HostRepositoryTestDouble.HOST);
-        reservation.setStartDate(LocalDate.of(2022,8,31));
+        reservation.setStartDate(LocalDate.of(2021,8,31));
         reservation.setEndDate(LocalDate.now());
         Guest guest = new Guest();
         guest.setId(1);
         reservation.setGuest(guest);
-        reservation.setTotal(BigDecimal.valueOf(300));
+        reservation.setTotal(BigDecimal.valueOf(340));
 
         Result<Reservation> result = service.add(reservation);
         assertFalse(result.isSuccess());

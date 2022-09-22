@@ -54,11 +54,14 @@ public class ReservationService {
     }
 
     public Result add(Reservation newReservation) throws DataException {
-        Result result = validateDuplicateDates(newReservation);
+        Result result = new Result();
+        validate(newReservation, result);
         if (!result.isSuccess()) {
             return result;
         }
+        result = validateDuplicateDates(newReservation);
         if (result.isSuccess()) {
+            newReservation.setTotal(calculateTotal(newReservation));
             newReservation = reservationRepository.add(newReservation);
 
             result.setPayload(newReservation);
@@ -85,17 +88,17 @@ public class ReservationService {
     // UPDATE
     public Result<Reservation> updateReservation(Reservation newReservation, List<Reservation> existingReservations) throws DataException {
         Result result = validateDuplicateDates(newReservation);
+        validate(newReservation, result);
 
         if(!result.isSuccess()) {
            return result;
         }
-
+        newReservation.setTotal(calculateTotal(newReservation));
         boolean updated = reservationRepository.updateReservation(newReservation);
 
         if(!updated){
             result.addMessage(String.format("Reservation entry with id %s does not exist", newReservation.getId()));
         }
-
         result.setPayload(newReservation);
 
         return result;
@@ -118,15 +121,22 @@ public class ReservationService {
         return result;
     }
 
-    public Result validate(Reservation newReservation, Result result) throws DataException {
-        result = new Result();
+    public Result validate(Reservation newReservation, Result result) {
 
         if(newReservation.getHost() == null) {
+            result.addMessage("Host cannot be null.");
+            return result;
+        }
+        if(newReservation.getHost().getEmail() == null) {
             result.addMessage("Host email cannot be null.");
             return result;
         }
+        if(newReservation.getHost().getEmail().isBlank()) {
+            result.addMessage("Host email cannot be blank.");
+            return result;
+        }
         if(newReservation.getGuest() == null) {
-            result.addMessage("Guest email cannot be null.");
+            result.addMessage("Guest cannot be null.");
             return result;
         }
         if(newReservation.getStartDate() == null){
@@ -150,6 +160,10 @@ public class ReservationService {
         for(Reservation reservation : existingReservations) {
             if(newReservation.getId() == reservation.getId()) {
                 continue;
+            }
+            if(newReservation.getStartDate().isBefore(LocalDate.now())) {
+                result.addMessage("Cannot make a reservation that is in the past");
+                return result;
             }
             if(newReservation.getStartDate().equals(reservation.getStartDate()) && newReservation.getEndDate().equals(reservation.getEndDate())) {
                 result.addMessage("Reservation cannot overlap existing reservation dates");
