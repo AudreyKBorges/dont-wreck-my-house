@@ -73,6 +73,7 @@ public class View {
         result.setStartDate(start);
         result.setEndDate(end);
         result.setGuest(guest);
+        displayText(String.format("Total: %s", reservation.getCalculateTotal()));
 
         return result;
     }

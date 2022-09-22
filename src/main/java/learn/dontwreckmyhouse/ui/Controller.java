@@ -145,7 +145,6 @@ public class Controller {
             Reservation updateReservation = reservationService.findById(Integer.parseInt(id), host);
 
             Reservation newReservation = view.editReservation(updateReservation, host, guest);
-            view.displayText(String.format("Total: %s", updateReservation.getCalculateTotal()));
             view.userPrompt();
 
             Result <Reservation> result = reservationService.updateReservation(newReservation, existingReservations);
